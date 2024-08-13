@@ -1,20 +1,21 @@
 import { defineStore } from "pinia";
 import {
-  type userType,
-  store,
-  router,
   resetRouter,
+  router,
   routerArrays,
-  storageLocal
+  storageLocal,
+  store,
+  type userType
 } from "../utils";
 import {
-  type UserResult,
-  type RefreshTokenResult,
   getLogin,
-  refreshTokenApi
+  refreshTokenApi,
+  type RefreshTokenResult,
+  type UserResult
 } from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
-import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
+import { type DataInfo, removeToken, setToken, userKey } from "@/utils/auth";
+import { signPath } from "@/router";
 
 export const useUserStore = defineStore({
   id: "pure-user",
@@ -77,7 +78,7 @@ export const useUserStore = defineStore({
       removeToken();
       useMultiTagsStoreHook().handleTags("equal", [...routerArrays]);
       resetRouter();
-      router.push("/login");
+      router.push(signPath);
     },
     /** 刷新`token` */
     async handRefreshToken(data) {

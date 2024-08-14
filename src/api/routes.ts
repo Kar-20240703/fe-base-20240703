@@ -1,10 +1,6 @@
 import { http } from "@/utils/http";
-
-type Result = {
-  success: boolean;
-  data: Array<any>;
-};
+import type { R } from "@/model/vo/R";
 
 export const getAsyncRoutes = () => {
-  return http.request<Result>("get", "/get-async-routes");
+  return http.request<R<any[]>>("get", "/get-async-routes");
 };

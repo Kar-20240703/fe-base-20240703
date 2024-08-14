@@ -13,7 +13,8 @@ export default {
       name: "403",
       component: () => import("@/views/error/403.vue"),
       meta: {
-        title: "403"
+        title: "403",
+        showLink: false
       }
     },
     {
@@ -21,7 +22,8 @@ export default {
       name: "404",
       component: () => import("@/views/error/404.vue"),
       meta: {
-        title: "404"
+        title: "404",
+        showLink: false
       }
     },
     {
@@ -29,7 +31,8 @@ export default {
       name: "500",
       component: () => import("@/views/error/500.vue"),
       meta: {
-        title: "500"
+        title: "500",
+        showLink: false
       }
     }
   ]

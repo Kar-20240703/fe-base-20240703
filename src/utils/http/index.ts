@@ -17,7 +17,6 @@ import { ToastError } from "@/utils/ToastUtil";
 import type { R } from "@/model/vo/R";
 import CommonConstant from "@/model/constant/CommonConstant";
 import Cookies from "js-cookie";
-import { useNav } from "@/layout/hooks/useNav";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -178,7 +177,7 @@ class PureHttp {
               }
 
               reject(new Error("登录过期"));
-              useNav().logout(); // 退出登录
+              useUserStoreHook().logOut(); // 退出登录
             } else {
               if (!hiddenErrorMsgFlag) {
                 ToastError(res.msg || "请求失败：服务器未启动");

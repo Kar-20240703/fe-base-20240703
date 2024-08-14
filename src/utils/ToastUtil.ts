@@ -8,8 +8,7 @@ export function ToastSuccess(msg: string | VNode, duration: number = 5000) {
 
   ElMessage.success({
     message: msg,
-    duration,
-    plain: true
+    duration
   });
 }
 
@@ -20,8 +19,7 @@ export function ToastInfo(msg: string | VNode, duration: number = 5000) {
 
   ElMessage.info({
     message: msg,
-    duration,
-    plain: true
+    duration
   });
 }
 
@@ -32,8 +30,7 @@ export function ToastWarning(msg: string | VNode, duration: number = 5000) {
 
   ElMessage.warning({
     message: msg,
-    duration,
-    plain: true
+    duration
   });
 }
 
@@ -44,8 +41,7 @@ export function ToastError(msg: string | VNode, duration: number = 8000) {
 
   ElMessage.error({
     message: msg,
-    duration,
-    plain: true
+    duration
   });
 }
 

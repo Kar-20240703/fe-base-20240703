@@ -63,10 +63,12 @@ export const useUserStore = defineStore({
       return new Promise<UserResult>((resolve, reject) => {
         getLogin(data)
           .then(data => {
-            if (data?.success) setToken(data.data);
-            resolve(data);
+            console.log("data", data);
+            if (data?.data) setToken(data.data);
+            resolve(data.data);
           })
           .catch(error => {
+            console.log("error", error);
             reject(error);
           });
       });
@@ -87,7 +89,7 @@ export const useUserStore = defineStore({
           .then(data => {
             if (data) {
               setToken(data.data);
-              resolve(data);
+              resolve(data.data);
             }
           })
           .catch(error => {

@@ -1,10 +1,8 @@
-import { signPath } from "@/router";
-
 const Layout = () => import("@/layout/index.vue");
 
 export default [
   {
-    path: signPath,
+    path: "/sign",
     name: "Sign",
     component: () => import("@/views/sign/index.vue"),
     meta: {

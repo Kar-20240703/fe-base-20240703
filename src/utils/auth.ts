@@ -44,15 +44,15 @@ export function getToken(): DataInfo<number> {
  * 将`avatar`、`username`、`nickname`、`roles`、`jwtRefreshToken`、`expires`这六条信息放在key值为`user-info`的localStorage里（利用`multipleTabsKey`当浏览器完全关闭后自动销毁）
  */
 export function setToken(data: DataInfo<number>) {
-  let expires = 0;
+  let jwtExpireTs = 0;
   const { jwt, jwtRefreshToken } = data;
   const { isRemembered, loginDay } = useUserStoreHook();
-  expires = data.jwtExpireTs; // 如果后端直接设置时间戳，将此处代码改为expires = data.expires，然后把上面的DataInfo<Date>改成DataInfo<number>即可
-  const cookieString = JSON.stringify({ jwt, expires, jwtRefreshToken });
+  jwtExpireTs = parseInt(data.jwtExpireTs); // 如果后端直接设置时间戳，将此处代码改为expires = data.expires，然后把上面的DataInfo<Date>改成DataInfo<number>即可
+  const cookieString = JSON.stringify({ jwt, jwtExpireTs, jwtRefreshToken });
 
-  expires > 0
+  jwtExpireTs > 0
     ? Cookies.set(TokenKey, cookieString, {
-        expires: (expires - Date.now()) / 86400000
+        expires: new Date(jwtExpireTs)
       })
     : Cookies.set(TokenKey, cookieString);
 
@@ -73,7 +73,7 @@ export function setToken(data: DataInfo<number>) {
     useUserStoreHook().SET_ROLES(roles);
     storageLocal().setItem(userKey, {
       jwtRefreshToken,
-      expires,
+      jwtExpireTs,
       avatar,
       username,
       nickname,
@@ -116,5 +116,5 @@ export function removeToken() {
 
 /** 格式化token（jwt格式） */
 export const formatToken = (token: string): string => {
-  return "Bearer " + token;
+  return token;
 };

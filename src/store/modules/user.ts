@@ -8,9 +8,9 @@ import {
   type userType
 } from "../utils";
 import {
-  getLogin,
   refreshTokenApi,
   type RefreshTokenResult,
+  signUserNameSignInPassword,
   type UserResult
 } from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
@@ -61,7 +61,7 @@ export const useUserStore = defineStore({
     /** 登入 */
     async loginByUsername(data) {
       return new Promise<UserResult>((resolve, reject) => {
-        getLogin(data)
+        signUserNameSignInPassword(data)
           .then(data => {
             if (data?.data) setToken(data.data);
             resolve(data.data);
@@ -81,13 +81,15 @@ export const useUserStore = defineStore({
       router.push(signPath);
     },
     /** 刷新`token` */
-    async handRefreshToken(data) {
+    async handRefreshToken(body) {
       return new Promise<RefreshTokenResult>((resolve, reject) => {
-        refreshTokenApi(data)
+        refreshTokenApi(body)
           .then(data => {
-            if (data) {
+            if (data?.data) {
               setToken(data.data);
               resolve(data.data);
+            } else {
+              reject(new Error("刷新token异常"));
             }
           })
           .catch(error => {

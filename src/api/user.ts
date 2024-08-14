@@ -28,10 +28,19 @@ export type RefreshTokenResult = {
 };
 
 /** 登录 */
-export const getLogin = (data?: object) => {
+export const signUserNameSignInPassword = (data?: object) => {
   return http.request<UserResult>(
     "post",
     baseApi("/sign/userName/signIn/password"),
+    data
+  );
+};
+
+/** 修改密码 */
+export const signUserNameUpdatePassword = (data?: object) => {
+  return http.request<UserResult>(
+    "post",
+    baseApi("/sign/userName/updatePassword"),
     data
   );
 };

@@ -1,5 +1,6 @@
 import type MyOrderDTO from "@/model/dto/MyOrderDTO";
 import { http } from "@/utils/http";
+import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface NotEmptyIdSet {
@@ -11,7 +12,12 @@ export function BaseMenuDeleteByIdSet(
   form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<string>("post", "/base/menu/deleteByIdSet", form, config);
+  return http.request<string>(
+    "post",
+    baseApi("/base/menu/deleteByIdSet"),
+    form,
+    config
+  );
 }
 
 export interface BaseMenuPageDTO {
@@ -59,7 +65,12 @@ export function BaseMenuPage(
   form: BaseMenuPageDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<BaseMenuDO>("post", "/base/menu/page", form, config);
+  return http.request<BaseMenuDO>(
+    "post",
+    baseApi("/base/menu/page"),
+    form,
+    config
+  );
 }
 
 export interface ChangeNumberDTO {
@@ -72,14 +83,19 @@ export function BaseMenuAddOrderNo(
   form: ChangeNumberDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<string>("post", "/base/menu/addOrderNo", form, config);
+  return http.request<string>(
+    "post",
+    baseApi("/base/menu/addOrderNo"),
+    form,
+    config
+  );
 }
 
 // 获取：当前用户绑定的菜单
 export function BaseMenuUserSelfMenuList(config?: PureHttpRequestConfig) {
   return http.request<BaseMenuDO[]>(
     "post",
-    "/base/menu/userSelfMenuList",
+    baseApi("/base/menu/userSelfMenuList"),
     undefined,
     config
   );
@@ -94,7 +110,12 @@ export function BaseMenuInfoById(
   form: NotNullId,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<BaseMenuDO>("post", "/base/menu/infoById", form, config);
+  return http.request<BaseMenuDO>(
+    "post",
+    baseApi("/base/menu/infoById"),
+    form,
+    config
+  );
 }
 
 // 查询：树结构
@@ -102,7 +123,12 @@ export function BaseMenuTree(
   form: BaseMenuPageDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<BaseMenuDO[]>("post", "/base/menu/tree", form, config);
+  return http.request<BaseMenuDO[]>(
+    "post",
+    baseApi("/base/menu/tree"),
+    form,
+    config
+  );
 }
 
 export interface BaseMenuInsertOrUpdateDTO {
@@ -130,7 +156,7 @@ export function BaseMenuInsertOrUpdate(
 ) {
   return http.request<string>(
     "post",
-    "/base/menu/insertOrUpdate",
+    baseApi("/base/menu/insertOrUpdate"),
     form,
     config
   );

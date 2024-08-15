@@ -1,4 +1,5 @@
 import { http } from "@/utils/http";
+import { baseApi } from "@/api/http/utils";
 import type { PureHttpRequestConfig } from "@/utils/http/types";
 
 export interface SignUserNameUpdateUserNameDTO {
@@ -13,7 +14,7 @@ export function SignUserNameUpdateUserName(
 ) {
   return http.request<string>(
     "post",
-    "/sign/userName/updateUserName",
+    baseApi("/sign/userName/updateUserName"),
     form,
     config
   );
@@ -30,7 +31,12 @@ export function SignUserNameSignUp(
   form: SignUserNameSignUpDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<string>("post", "/sign/userName/signUp", form, config);
+  return http.request<string>(
+    "post",
+    baseApi("/sign/userName/signUp"),
+    form,
+    config
+  );
 }
 
 export interface SignUserNameSignDeleteDTO {
@@ -44,7 +50,7 @@ export function SignUserNameSignDelete(
 ) {
   return http.request<string>(
     "post",
-    "/sign/userName/signDelete",
+    baseApi("/sign/userName/signDelete"),
     form,
     config
   );
@@ -68,7 +74,7 @@ export function SignUserNameSignInPassword(
 ) {
   return http.request<SignInVO>(
     "post",
-    "/sign/userName/signIn/password",
+    baseApi("/sign/userName/signIn/password"),
     form,
     config
   );
@@ -85,7 +91,7 @@ export function SignUserNameJwtRefreshToken(
 ) {
   return http.request<SignInVO>(
     "post",
-    "/sign/userName/jwtRefreshToken",
+    baseApi("/sign/userName/jwtRefreshToken"),
     form,
     config
   );
@@ -104,7 +110,7 @@ export function SignUserNameUpdatePassword(
 ) {
   return http.request<string>(
     "post",
-    "/sign/userName/updatePassword",
+    baseApi("/sign/userName/updatePassword"),
     form,
     config
   );

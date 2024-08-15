@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import { baseApi } from "@/api/utils";
+import { baseApi } from "@/api/http/utils";
 
 export type UserResult = {
   /** 头像 */

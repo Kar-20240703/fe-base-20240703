@@ -12,7 +12,7 @@ import {
   type RefreshTokenResult,
   signUserNameSignInPassword,
   type UserResult
-} from "@/api/user";
+} from "@/api/http/user";
 import { useMultiTagsStoreHook } from "./multiTags";
 import { type DataInfo, removeToken, setToken, userKey } from "@/utils/auth";
 import { signPath } from "@/router";

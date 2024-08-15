@@ -1,33 +1,33 @@
 import {
-  type RouterHistory,
-  type RouteRecordRaw,
-  type RouteComponent,
+  createWebHashHistory,
   createWebHistory,
-  createWebHashHistory
+  type RouteComponent,
+  type RouteRecordRaw,
+  type RouterHistory
 } from "vue-router";
 import { router } from "./index";
 import { isProxy, toRaw } from "vue";
 import { useTimeoutFn } from "@vueuse/core";
 import {
-  isString,
   cloneDeep,
-  isAllEmpty,
   intersection,
-  storageLocal,
-  isIncludeAllChildren
+  isAllEmpty,
+  isIncludeAllChildren,
+  isString,
+  storageLocal
 } from "@pureadmin/utils";
 import { getConfig } from "@/config";
 import { buildHierarchyTree } from "@/utils/tree";
-import { userKey, type DataInfo } from "@/utils/auth";
+import { type DataInfo, userKey } from "@/utils/auth";
 import { type menuType, routerArrays } from "@/layout/types";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
+// 动态路由
+import { getAsyncRoutes } from "@/api/http/routes";
+
 const IFrame = () => import("@/layout/frame.vue");
 // https://cn.vitejs.dev/guide/features.html#glob-import
 const modulesRoutes = import.meta.glob("/src/views/**/*.{vue,tsx}");
-
-// 动态路由
-import { getAsyncRoutes } from "@/api/routes";
 
 function handRank(routeInfo: any) {
   const { name, path, parentId, meta } = routeInfo;

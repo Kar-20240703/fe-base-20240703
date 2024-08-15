@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Motion from "./utils/motion";
 import { useRouter } from "vue-router";
-import { message } from "@/utils/message";
 import { useNav } from "@/layout/hooks/useNav";
 import type { FormInstance } from "element-plus";
 import { useLayout } from "@/layout/hooks/useLayout";
@@ -18,6 +17,7 @@ import Lock from "@iconify-icons/ri/lock-fill";
 import User from "@iconify-icons/ri/user-3-fill";
 import { Validate } from "@/utils/ValidatorUtil";
 import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
+import { ToastSuccess } from "@/utils/ToastUtil";
 
 defineOptions({
   name: "Sign"
@@ -48,17 +48,13 @@ const onLogin = async (formEl: FormInstance | undefined) => {
           username: ruleForm.username,
           password: PasswordRSAEncrypt(ruleForm.password)
         })
-        .then(res => {
-          if (res.jwt) {
-            // 获取后端路由
-            return initRouter().then(() => {
-              router.push(getTopMenu(true).path).then(() => {
-                message("登录成功", { type: "success" });
-              });
+        .then(() => {
+          // 获取后端路由
+          return initRouter().then(() => {
+            router.push(getTopMenu(true).path).then(() => {
+              ToastSuccess("登录成功");
             });
-          } else {
-            message("登录失败", { type: "error" });
-          }
+          });
         })
         .finally(() => (loading.value = false));
     }

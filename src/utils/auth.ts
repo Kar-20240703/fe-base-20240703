@@ -4,11 +4,11 @@ import { useUserStoreHook } from "@/store/modules/user";
 
 export interface DataInfo<T> {
   /** token */
-  jwt: string;
+  jwt?: string;
   /** `accessToken`的过期时间（时间戳） */
-  jwtExpireTs: T;
+  jwtExpireTs?: T;
   /** 用于调用刷新accessToken的接口时所需的token */
-  jwtRefreshToken: string;
+  jwtRefreshToken?: string;
   /** 头像 */
   avatar?: string;
   /** 用户名 */
@@ -30,7 +30,7 @@ export const TokenKey = "authorized-token";
 export const multipleTabsKey = "multiple-tabs";
 
 /** 获取`token` */
-export function getToken(): DataInfo<number> {
+export function getToken(): DataInfo<string> {
   // 此处与`TokenKey`相同，此写法解决初始化时`Cookies`中不存在`TokenKey`报错
   return Cookies.get(TokenKey)
     ? JSON.parse(Cookies.get(TokenKey))
@@ -43,7 +43,7 @@ export function getToken(): DataInfo<number> {
  * 将`accessToken`、`expires`、`jwtRefreshToken`这三条信息放在key值为authorized-token的cookie里（过期自动销毁）
  * 将`avatar`、`username`、`nickname`、`roles`、`jwtRefreshToken`、`expires`这六条信息放在key值为`user-info`的localStorage里（利用`multipleTabsKey`当浏览器完全关闭后自动销毁）
  */
-export function setToken(data: DataInfo<number>) {
+export function setToken(data: DataInfo<string>) {
   let jwtExpireTs = 0;
   const { jwt, jwtRefreshToken } = data;
   const { isRemembered, loginDay } = useUserStoreHook();

@@ -2,7 +2,6 @@
 import Motion from "./utils/motion";
 import { useRouter } from "vue-router";
 import { message } from "@/utils/message";
-import { loginRules } from "./utils/rule";
 import { useNav } from "@/layout/hooks/useNav";
 import type { FormInstance } from "element-plus";
 import { useLayout } from "@/layout/hooks/useLayout";
@@ -17,9 +16,11 @@ import dayIcon from "@/assets/svg/day.svg?component";
 import darkIcon from "@/assets/svg/dark.svg?component";
 import Lock from "@iconify-icons/ri/lock-fill";
 import User from "@iconify-icons/ri/user-3-fill";
+import { Validate } from "@/utils/ValidatorUtil";
+import { PasswordRSAEncrypt } from "@/utils/RsaUtil";
 
 defineOptions({
-  name: "Login"
+  name: "Sign"
 });
 const router = useRouter();
 const loading = ref(false);
@@ -45,7 +46,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
       useUserStoreHook()
         .loginByUsername({
           username: ruleForm.username,
-          password: ruleForm.password
+          password: PasswordRSAEncrypt(ruleForm.password)
         })
         .then(res => {
           if (res.jwt) {
@@ -104,19 +105,12 @@ onBeforeUnmount(() => {
             <h2 class="outline-none">{{ title }}</h2>
           </Motion>
 
-          <el-form
-            ref="ruleFormRef"
-            :model="ruleForm"
-            :rules="loginRules"
-            size="large"
-          >
+          <el-form ref="ruleFormRef" :model="ruleForm" size="large">
             <Motion :delay="100">
               <el-form-item
                 :rules="[
                   {
-                    required: true,
-                    message: '请输入账号',
-                    trigger: 'blur'
+                    validator: Validate.username.validator
                   }
                 ]"
                 prop="username"
@@ -131,7 +125,16 @@ onBeforeUnmount(() => {
             </Motion>
 
             <Motion :delay="150">
-              <el-form-item prop="password">
+              <el-form-item
+                prop="password"
+                :rules="[
+                  {
+                    required: true,
+                    message: '请输入密码',
+                    trigger: 'blur'
+                  }
+                ]"
+              >
                 <el-input
                   v-model="ruleForm.password"
                   clearable

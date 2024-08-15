@@ -7,15 +7,14 @@ import {
   store,
   type userType
 } from "../utils";
-import {
-  refreshTokenApi,
-  type RefreshTokenResult,
-  signUserNameSignInPassword,
-  type UserResult
-} from "@/api/http/user";
 import { useMultiTagsStoreHook } from "./multiTags";
 import { type DataInfo, removeToken, setToken, userKey } from "@/utils/auth";
 import { signPath } from "@/router";
+import {
+  type SignInVO,
+  SignUserNameJwtRefreshToken,
+  SignUserNameSignInPassword
+} from "@/api/http/base/SignUserNameController";
 
 export const useUserStore = defineStore({
   id: "pure-user",
@@ -60,8 +59,8 @@ export const useUserStore = defineStore({
     },
     /** 登入 */
     async loginByUsername(data) {
-      return new Promise<UserResult>((resolve, reject) => {
-        signUserNameSignInPassword(data)
+      return new Promise<SignInVO>((resolve, reject) => {
+        SignUserNameSignInPassword(data)
           .then(data => {
             if (data?.data) setToken(data.data);
             resolve(data.data);
@@ -82,8 +81,8 @@ export const useUserStore = defineStore({
     },
     /** 刷新`token` */
     async handRefreshToken(body) {
-      return new Promise<RefreshTokenResult>((resolve, reject) => {
-        refreshTokenApi(body)
+      return new Promise<SignInVO>((resolve, reject) => {
+        SignUserNameJwtRefreshToken(body)
           .then(data => {
             if (data?.data) {
               setToken(data.data);

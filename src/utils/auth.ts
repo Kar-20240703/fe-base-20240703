@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import { storageLocal } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
 
-export interface DataInfo<T> {
+export interface DataInfo<T = string> {
   /** token */
   jwt?: string;
   /** `accessToken`的过期时间（时间戳） */
@@ -44,7 +44,7 @@ export function setToken(data: DataInfo<string>) {
   let jwtExpireTs = 0;
   const { jwt, jwtRefreshToken } = data;
   const { isRemembered, loginDay } = useUserStoreHook();
-  jwtExpireTs = parseInt(data.jwtExpireTs); // 如果后端直接设置时间戳，将此处代码改为expires = data.expires，然后把上面的DataInfo<Date>改成DataInfo<number>即可
+  jwtExpireTs = parseInt(data.jwtExpireTs);
 
   Cookies.set(
     multipleTabsKey,
@@ -81,14 +81,10 @@ export function setToken(data: DataInfo<string>) {
       roles
     });
   } else {
-    const avatar =
-      storageLocal().getItem<DataInfo<number>>(userKey)?.avatar ?? "";
-    const username =
-      storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "";
-    const nickname =
-      storageLocal().getItem<DataInfo<number>>(userKey)?.nickname ?? "";
-    const roles =
-      storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [];
+    const avatar = storageLocal().getItem<DataInfo>(userKey)?.avatar ?? "";
+    const username = storageLocal().getItem<DataInfo>(userKey)?.username ?? "";
+    const nickname = storageLocal().getItem<DataInfo>(userKey)?.nickname ?? "";
+    const roles = storageLocal().getItem<DataInfo>(userKey)?.roles ?? [];
     setUserKey({
       avatar,
       username,

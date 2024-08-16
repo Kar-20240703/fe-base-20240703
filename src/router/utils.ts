@@ -317,7 +317,7 @@ function addAsyncRoutes(arrRoutes: Array<RouteRecordRaw>) {
 
       const vuePath = `/src/views${realPath}/index.vue`;
 
-      const tsxPath = `/src/views${realPath}/tsx.vue`;
+      const tsxPath = `/src/views${realPath}/index.tsx`;
 
       v.component = modulesRoutes[vuePath] || modulesRoutes[tsxPath];
     }

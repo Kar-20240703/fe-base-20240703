@@ -20,7 +20,7 @@ export interface DataInfo<T> {
 }
 
 export const userKey = "user-info";
-export const TokenKey = "authorized-token";
+
 /**
  * 通过`multiple-tabs`是否在`cookie`中，判断用户是否已经登录系统，
  * 从而支持多标签页打开已经登录的系统后无需再登录。
@@ -31,10 +31,7 @@ export const multipleTabsKey = "multiple-tabs";
 
 /** 获取`token` */
 export function getToken(): DataInfo<string> {
-  // 此处与`TokenKey`相同，此写法解决初始化时`Cookies`中不存在`TokenKey`报错
-  return Cookies.get(TokenKey)
-    ? JSON.parse(Cookies.get(TokenKey))
-    : storageLocal().getItem(userKey);
+  return storageLocal().getItem(userKey);
 }
 
 /**
@@ -48,13 +45,6 @@ export function setToken(data: DataInfo<string>) {
   const { jwt, jwtRefreshToken } = data;
   const { isRemembered, loginDay } = useUserStoreHook();
   jwtExpireTs = parseInt(data.jwtExpireTs); // 如果后端直接设置时间戳，将此处代码改为expires = data.expires，然后把上面的DataInfo<Date>改成DataInfo<number>即可
-  const cookieString = JSON.stringify({ jwt, jwtExpireTs, jwtRefreshToken });
-
-  jwtExpireTs > 0
-    ? Cookies.set(TokenKey, cookieString, {
-        expires: new Date(jwtExpireTs)
-      })
-    : Cookies.set(TokenKey, cookieString);
 
   Cookies.set(
     multipleTabsKey,
@@ -72,6 +62,7 @@ export function setToken(data: DataInfo<string>) {
     useUserStoreHook().SET_NICKNAME(nickname);
     useUserStoreHook().SET_ROLES(roles);
     storageLocal().setItem(userKey, {
+      jwt,
       jwtRefreshToken,
       jwtExpireTs,
       avatar,
@@ -109,7 +100,6 @@ export function setToken(data: DataInfo<string>) {
 
 /** 删除`token`以及key值为`user-info`的localStorage信息 */
 export function removeToken() {
-  Cookies.remove(TokenKey);
   Cookies.remove(multipleTabsKey);
   storageLocal().removeItem(userKey);
 }

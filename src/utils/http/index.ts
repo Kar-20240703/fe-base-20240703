@@ -11,12 +11,11 @@ import type {
 } from "./types.d";
 import { stringify } from "qs";
 import NProgress from "../progress";
-import { formatToken, getToken, TokenKey } from "@/utils/auth";
+import { formatToken, getToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
 import type { R } from "@/model/vo/R";
 import CommonConstant from "@/model/constant/CommonConstant";
-import Cookies from "js-cookie";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -171,7 +170,7 @@ class PureHttp {
             if (res.code === 100111) {
               // 这个代码需要跳转到：登录页面
               if (!hiddenErrorMsgFlag) {
-                if (Cookies.get(TokenKey)) {
+                if (getToken()?.jwt) {
                   ToastError(res.msg); // 存在 jwt才提示错误消息
                 }
               }

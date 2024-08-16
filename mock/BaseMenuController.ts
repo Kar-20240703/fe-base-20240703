@@ -1,13 +1,14 @@
 // 模拟后端动态生成路由
 import { defineFakeRoute } from "vite-plugin-fake-server/client";
+import CommonConstant from "@/model/constant/CommonConstant";
 
 export default defineFakeRoute([
   {
-    url: "/get-async-routes",
-    method: "get",
+    url: "/base/menu/userSelfMenuList",
+    method: "post",
     response: () => {
       return {
-        code: 200,
+        code: CommonConstant.API_OK_CODE,
         receive: true,
         data: []
       };

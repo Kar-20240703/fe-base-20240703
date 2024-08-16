@@ -30,7 +30,7 @@ export const userKey = "user-info";
 export const multipleTabsKey = "multiple-tabs";
 
 /** 获取`token` */
-export function getToken(): DataInfo<string> {
+export function getToken(): DataInfo {
   return storageLocal().getItem(userKey);
 }
 
@@ -40,7 +40,7 @@ export function getToken(): DataInfo<string> {
  * 将`accessToken`、`expires`、`jwtRefreshToken`这三条信息放在key值为authorized-token的cookie里（过期自动销毁）
  * 将`avatar`、`username`、`nickname`、`roles`、`jwtRefreshToken`、`expires`这六条信息放在key值为`user-info`的localStorage里（利用`multipleTabsKey`当浏览器完全关闭后自动销毁）
  */
-export function setToken(data: DataInfo<string>) {
+export function setToken(data: DataInfo) {
   let jwtExpireTs = 0;
   const { jwt, jwtRefreshToken } = data;
   const { isRemembered, loginDay } = useUserStoreHook();

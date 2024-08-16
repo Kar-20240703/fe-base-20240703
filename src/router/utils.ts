@@ -25,6 +25,7 @@ import { usePermissionStoreHook } from "@/store/modules/permission";
 import { BaseMenuUserSelfMenuList } from "@/api/http/base/BaseMenuController";
 
 const IFrame = () => import("@/layout/frame.vue");
+
 // https://cn.vitejs.dev/guide/features.html#glob-import
 const modulesRoutes = import.meta.glob("/src/views/**/*.{vue,tsx}");
 
@@ -300,7 +301,6 @@ function handleAliveRoute({ name }: ToRouteType, mode?: string) {
 /** 过滤后端传来的动态路由 重新生成规范路由 */
 function addAsyncRoutes(arrRoutes: Array<RouteRecordRaw>) {
   if (!arrRoutes || !arrRoutes.length) return;
-  const modulesRoutesKeys = Object.keys(modulesRoutes);
   arrRoutes.forEach((v: RouteRecordRaw) => {
     // 将backstage属性加入meta，标识此路由为后端返回路由
     v.meta.backstage = true;
@@ -314,10 +314,13 @@ function addAsyncRoutes(arrRoutes: Array<RouteRecordRaw>) {
       v.component = IFrame;
     } else {
       // 对后端传component组件路径和不传做兼容（如果后端传component组件路径，那么path可以随便写，如果不传，component组件路径会跟path保持一致）
-      const index = v?.component
-        ? modulesRoutesKeys.findIndex(ev => ev.includes(v.component as any))
-        : modulesRoutesKeys.findIndex(ev => ev.includes(v.path));
-      v.component = modulesRoutes[modulesRoutesKeys[index]];
+      const realPath = v?.component || v.path;
+
+      const vuePath = `/src/views${realPath}/index.vue`;
+
+      const tsxPath = `/src/views${realPath}/tsx.vue`;
+
+      v.component = modulesRoutes[vuePath] || modulesRoutes[tsxPath];
     }
     if (v?.children && v.children.length) {
       addAsyncRoutes(v.children);

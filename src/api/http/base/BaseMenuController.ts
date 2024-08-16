@@ -8,7 +8,7 @@ export interface NotEmptyIdSet {
 }
 
 // 批量删除
-export function BaseMenuDeleteByIdSet(
+export function baseMenuDeleteByIdSet(
   form: NotEmptyIdSet,
   config?: PureHttpRequestConfig
 ) {
@@ -61,7 +61,7 @@ export interface BaseMenuDO {
 }
 
 // 分页排序查询
-export function BaseMenuPage(
+export function baseMenuPage(
   form: BaseMenuPageDTO,
   config?: PureHttpRequestConfig
 ) {
@@ -79,7 +79,7 @@ export interface ChangeNumberDTO {
 }
 
 // 通过主键 idSet，加减排序号
-export function BaseMenuAddOrderNo(
+export function baseMenuAddOrderNo(
   form: ChangeNumberDTO,
   config?: PureHttpRequestConfig
 ) {
@@ -92,7 +92,7 @@ export function BaseMenuAddOrderNo(
 }
 
 // 获取：当前用户绑定的菜单
-export function BaseMenuUserSelfMenuList(config?: PureHttpRequestConfig) {
+export function baseMenuUserSelfMenuList(config?: PureHttpRequestConfig) {
   return http.request<BaseMenuDO[]>(
     "post",
     baseApi("/base/menu/userSelfMenuList"),
@@ -106,7 +106,7 @@ export interface NotNullId {
 }
 
 // 通过主键id，查看详情
-export function BaseMenuInfoById(
+export function baseMenuInfoById(
   form: NotNullId,
   config?: PureHttpRequestConfig
 ) {
@@ -119,7 +119,7 @@ export function BaseMenuInfoById(
 }
 
 // 查询：树结构
-export function BaseMenuTree(
+export function baseMenuTree(
   form: BaseMenuPageDTO,
   config?: PureHttpRequestConfig
 ) {
@@ -150,7 +150,7 @@ export interface BaseMenuInsertOrUpdateDTO {
 }
 
 // 新增/修改
-export function BaseMenuInsertOrUpdate(
+export function baseMenuInsertOrUpdate(
   form: BaseMenuInsertOrUpdateDTO,
   config?: PureHttpRequestConfig
 ) {

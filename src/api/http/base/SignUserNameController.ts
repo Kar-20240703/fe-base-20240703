@@ -8,7 +8,7 @@ export interface SignUserNameUpdateUserNameDTO {
 }
 
 // 修改用户名
-export function SignUserNameUpdateUserName(
+export function signUserNameUpdateUserName(
   form: SignUserNameUpdateUserNameDTO,
   config?: PureHttpRequestConfig
 ) {
@@ -27,7 +27,7 @@ export interface SignUserNameSignUpDTO {
 }
 
 // 注册
-export function SignUserNameSignUp(
+export function signUserNameSignUp(
   form: SignUserNameSignUpDTO,
   config?: PureHttpRequestConfig
 ) {
@@ -44,7 +44,7 @@ export interface SignUserNameSignDeleteDTO {
 }
 
 // 账号注销
-export function SignUserNameSignDelete(
+export function signUserNameSignDelete(
   form: SignUserNameSignDeleteDTO,
   config?: PureHttpRequestConfig
 ) {
@@ -68,7 +68,7 @@ export interface SignInVO {
 }
 
 // 账号密码登录
-export function SignUserNameSignInPassword(
+export function signUserNameSignInPassword(
   form: SignUserNameSignInPasswordDTO,
   config?: PureHttpRequestConfig
 ) {
@@ -85,7 +85,7 @@ export interface SignUserNameJwtRefreshTokenDTO {
 }
 
 // 刷新token
-export function SignUserNameJwtRefreshToken(
+export function signUserNameJwtRefreshToken(
   form: SignUserNameJwtRefreshTokenDTO,
   config?: PureHttpRequestConfig
 ) {
@@ -104,7 +104,7 @@ export interface SignUserNameUpdatePasswordDTO {
 }
 
 // 修改密码
-export function SignUserNameUpdatePassword(
+export function signUserNameUpdatePassword(
   form: SignUserNameUpdatePasswordDTO,
   config?: PureHttpRequestConfig
 ) {

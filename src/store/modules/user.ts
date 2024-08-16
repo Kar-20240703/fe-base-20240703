@@ -12,8 +12,8 @@ import { type DataInfo, removeToken, setToken, userKey } from "@/utils/auth";
 import { signPath } from "@/router";
 import {
   type SignInVO,
-  SignUserNameJwtRefreshToken,
-  SignUserNameSignInPassword
+  signUserNameJwtRefreshToken,
+  signUserNameSignInPassword
 } from "@/api/http/base/SignUserNameController";
 
 export const useUserStore = defineStore({
@@ -60,7 +60,7 @@ export const useUserStore = defineStore({
     /** 登入 */
     async loginByUsername(data) {
       return new Promise<SignInVO>((resolve, reject) => {
-        SignUserNameSignInPassword(data)
+        signUserNameSignInPassword(data)
           .then(data => {
             if (data?.data) setToken(data.data);
             resolve(data.data);
@@ -82,7 +82,7 @@ export const useUserStore = defineStore({
     /** 刷新`token` */
     async handRefreshToken(body) {
       return new Promise<SignInVO>((resolve, reject) => {
-        SignUserNameJwtRefreshToken(body)
+        signUserNameJwtRefreshToken(body)
           .then(data => {
             if (data?.data) {
               setToken(data.data);

@@ -22,7 +22,7 @@ import { type DataInfo, userKey } from "@/utils/auth";
 import { type menuType, routerArrays } from "@/layout/types";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
-import { BaseMenuUserSelfMenuList } from "@/api/http/base/BaseMenuController";
+import { baseMenuUserSelfMenuList } from "@/api/http/base/BaseMenuController";
 
 const IFrame = () => import("@/layout/frame.vue");
 
@@ -202,7 +202,7 @@ function initRouter() {
       });
     } else {
       return new Promise(resolve => {
-        BaseMenuUserSelfMenuList().then(({ data }) => {
+        baseMenuUserSelfMenuList().then(({ data }) => {
           handleAsyncRoutes(cloneDeep(data));
           storageLocal().setItem(key, data);
           resolve(router);
@@ -211,7 +211,7 @@ function initRouter() {
     }
   } else {
     return new Promise(resolve => {
-      BaseMenuUserSelfMenuList().then(({ data }) => {
+      baseMenuUserSelfMenuList().then(({ data }) => {
         handleAsyncRoutes(cloneDeep(data));
         resolve(router);
       });

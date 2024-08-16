@@ -190,6 +190,7 @@ router.beforeEach((to: ToRouteType, _from, next) => {
       toCorrectRoute();
     }
   } else {
+    // whiteList里面的路径不登陆就可以直接访问，其他路径则会跳转到登录页
     if (to.path !== signPath) {
       if (whiteList.indexOf(to.path) !== -1) {
         next();

@@ -46,7 +46,7 @@ export interface BaseMenuDO {
   updateTime?: string; // 修改时间，format：date-time
   remark?: string; // 备注
   pid?: string; // 父节点id（顶级则为0），format：int64
-  uuid?: string; // 该菜单的 uuid，用于：同步租户菜单等操作，备注：不允许修改
+  uuid?: string; // 该菜单的 uuid，用于：同步租户菜单等操作，备注：不能重复
   showFlag?: number; // 是否显示在 左侧的菜单栏里面，如果为 false，也可以通过 $router.push()访问到，format：int32
   updateId?: string; // 修改人id，format：int64
   path?: string; // 页面的 path，备注：相同父菜单下，子菜单 path不能重复

@@ -23,6 +23,7 @@ import { type menuType, routerArrays } from "@/layout/types";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { baseMenuUserSelfMenuList } from "@/api/http/base/BaseMenuController";
+import { ListToTree } from "@/utils/TreeUtil";
 
 const IFrame = () => import("@/layout/frame.vue");
 
@@ -201,7 +202,7 @@ function initRouter() {
       });
     } else {
       return new Promise(resolve => {
-        baseMenuUserSelfMenuList().then(({ data }) => {
+        getDynamicRoutes().then(data => {
           handleAsyncRoutes(cloneDeep(data));
           storageLocal().setItem(key, data);
           resolve(router);
@@ -210,12 +211,50 @@ function initRouter() {
     }
   } else {
     return new Promise(resolve => {
-      baseMenuUserSelfMenuList().then(({ data }) => {
+      getDynamicRoutes().then(data => {
         handleAsyncRoutes(cloneDeep(data));
         resolve(router);
       });
     });
   }
+}
+
+interface MyRouteConfigsTable extends RouteChildrenConfigsTable {
+  id?: string;
+  pid?: string;
+  orderNo?: number;
+}
+
+/** 获取：动态路由 */
+async function getDynamicRoutes(): Promise<MyRouteConfigsTable[]> {
+  const resArr: MyRouteConfigsTable[] = [];
+
+  const data = await baseMenuUserSelfMenuList();
+
+  if (!data) {
+    return resArr;
+  }
+
+  data.data.forEach(item => {
+    resArr.push({
+      id: item.id,
+      pid: item.pid,
+      path: item.path,
+      name: item.uuid,
+      redirect: item.redirect,
+      component: item.router as unknown as RouteComponent,
+      meta: {
+        title: item.name,
+        showLink: item.showFlag === 1,
+        icon: item.icon,
+        showParent: true
+      }
+    });
+  });
+
+  console.log("ListToTree(resArr)", ListToTree(cloneDeep(resArr)));
+
+  return ListToTree(resArr);
 }
 
 /**

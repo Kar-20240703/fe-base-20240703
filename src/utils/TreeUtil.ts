@@ -67,11 +67,11 @@ export function GetIdListForHasChildrenNode(
   return resultList;
 }
 
-// childrenFlag：true：children始终为 [] false：children为空时，children = null
+// childrenFlag：true：children始终为 [] false：children为空时，无 children属性
 export function ListToTree(
   list: any[],
   pid: string | number = "0",
-  childrenFlag: boolean = true,
+  childrenFlag: boolean = false,
   childrenName: string = "children",
   pidName: string = "pid",
   idName: string = "id"
@@ -95,7 +95,7 @@ export function ListToTree(
         if (childrenFlag) {
           mapDTO![childrenName] = [];
         } else {
-          mapDTO![childrenName] = null;
+          // mapDTO![childrenName] = null;
         }
       }
     }

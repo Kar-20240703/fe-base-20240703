@@ -28,7 +28,7 @@ export interface BaseMenuPageDTO {
   authFlag?: boolean; // 是否是权限菜单，权限菜单：不显示，只代表菜单权限
   parentId?: string; // 父节点id（顶级则为0），format：int64
   showFlag?: boolean; // 是否显示在 左侧的菜单栏里面，如果为 false，也可以通过 $router.push()访问到
-  path?: string; // 页面的 path，备注：相同父菜单下，子菜单 path不能重复
+  path?: string; // 页面的 path，备注：不能重复
   current?: string; // 第几页，format：int64
   router?: string; // 路由
   name?: string; // 菜单名
@@ -49,7 +49,7 @@ export interface BaseMenuDO {
   uuid?: string; // 该菜单的 uuid，用于：同步租户菜单等操作，备注：不能重复
   showFlag?: number; // 是否显示在 左侧的菜单栏里面，如果为 false，也可以通过 $router.push()访问到，format：int32
   updateId?: string; // 修改人id，format：int64
-  path?: string; // 页面的 path，备注：相同父菜单下，子菜单 path不能重复
+  path?: string; // 页面的 path，备注：不能重复
   router?: string; // 路由
   createTime?: string; // 创建时间，format：date-time
   children?: BaseMenuDO[]; // 子节点
@@ -141,7 +141,7 @@ export interface BaseMenuInsertOrUpdateDTO {
   pid?: string; // 父节点id（顶级则为0），format：int64
   remark?: string; // 备注
   showFlag?: boolean; // 是否显示在 左侧的菜单栏里面，如果为 false，也可以通过 $router.push()访问到
-  path?: string; // 页面的 path，备注：相同父菜单下，子菜单 path不能重复
+  path?: string; // 页面的 path，备注：不能重复
   router?: string; // 路由
   name?: string; // 菜单名，required：true
   id?: string; // 主键 id，format：int64

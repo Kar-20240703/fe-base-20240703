@@ -155,9 +155,9 @@ type ButtonProps = {
   }) => void;
 };
 
-interface DialogOptions extends DialogProps {
+interface DialogOptions<T = any> extends DialogProps {
   /** 内容区组件的 `props`，可通过 `defineProps` 接收 */
-  props?: any;
+  props?: T;
   /** 是否隐藏 `Dialog` 按钮操作区的内容 */
   hideFooter?: boolean;
   /** 确认按钮的 `Popconfirm` 气泡确认框相关配置 */

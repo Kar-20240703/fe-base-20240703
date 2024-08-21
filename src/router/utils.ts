@@ -245,14 +245,12 @@ async function getDynamicRoutes(): Promise<MyRouteConfigsTable[]> {
       component: item.router as unknown as RouteComponent,
       meta: {
         title: item.name,
-        showLink: item.showFlag === 1,
+        showLink: item.showFlag,
         icon: item.icon,
         showParent: true
       }
     });
   });
-
-  console.log("ListToTree(resArr)", ListToTree(cloneDeep(resArr)));
 
   return ListToTree(resArr);
 }

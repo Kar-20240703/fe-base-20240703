@@ -14,6 +14,8 @@ export default {
 
   ADD_ORDER_NO: "累加排序号",
 
+  DEFAULT_ORDER_NO: 10000,
+
   ADD_VALUE: "累加的值",
 
   API_OK_CODE: 200, // api请求成功的 code

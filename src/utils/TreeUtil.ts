@@ -144,9 +144,8 @@ function ListToTreeHandleResultList(
       return;
     }
 
+    // 如果：不存在该父节点，则表示是：顶层节点
     if (!listMap.get(value[pidName])![idName]) {
-      // 如果：不存在该父节点，则表示是：顶层节点
-
       resultList.push(value); // 添加：顶层节点
     }
   });

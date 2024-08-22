@@ -8,7 +8,7 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { getTopMenu, initRouter } from "@/router/utils";
 import { avatar, bg, illustration } from "./utils/static";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { onBeforeUnmount, onMounted, reactive, ref, toRaw } from "vue";
+import { onBeforeUnmount, onMounted, ref, toRaw } from "vue";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
 
 import dayIcon from "@/assets/svg/day.svg?component";
@@ -33,31 +33,38 @@ const { dataTheme, overallStyle, dataThemeChange } = useDataThemeChange();
 dataThemeChange(overallStyle.value);
 const { title } = useNav();
 
-const ruleForm = reactive({
+const ruleForm = ref({
   username: "admin",
   password: "karadmin"
 });
 
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  await formEl.validate((valid, fields) => {
-    if (valid) {
-      loading.value = true;
-      useUserStoreHook()
-        .loginByUsername({
-          username: ruleForm.username,
-          password: PasswordRSAEncrypt(ruleForm.password)
-        })
-        .then(() => {
-          // 获取后端路由
-          return initRouter().then(() => {
+  await formEl.validate(valid => {
+    if (!valid) {
+      return;
+    }
+    loading.value = true;
+    useUserStoreHook()
+      .loginByUsername({
+        username: ruleForm.value.username,
+        password: PasswordRSAEncrypt(ruleForm.value.password)
+      })
+      .then(() => {
+        // 获取后端路由
+        return initRouter()
+          .then(() => {
             router.push(getTopMenu(true).path).then(() => {
               ToastSuccess("欢迎回来 ~");
             });
+          })
+          .finally(() => {
+            loading.value = false;
           });
-        })
-        .finally(() => (loading.value = false));
-    }
+      })
+      .catch(() => {
+        loading.value = false;
+      });
   });
 };
 

@@ -5,13 +5,14 @@ import { BaseMenuInsertOrUpdateDTO } from "@/api/http/base/BaseMenuController";
 import { IEditFormProps } from "@/views/base/menu/types";
 import { cloneDeep } from "@pureadmin/utils";
 import { R } from "@/model/vo/R";
+import { formEditRule } from "@/views/base/menu/formEditRule";
 
 const initForm: BaseMenuInsertOrUpdateDTO = {};
 
 const form = ref<BaseMenuInsertOrUpdateDTO>(cloneDeep(initForm));
 const formRef = ref();
-const confirmLoading = ref<boolean>(false);
 const dialogLoading = ref<boolean>(false);
+const confirmLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 
 function getRef() {
@@ -35,17 +36,23 @@ function getConfirmLoading() {
 }
 
 function addOpen(formTemp?: BaseMenuInsertOrUpdateDTO) {
-  form.value = cloneDeep(initForm);
+  dialogLoading.value = false;
+  confirmLoading.value = false;
   if (formTemp) {
     form.value = formTemp;
+  } else {
+    form.value = cloneDeep(initForm);
   }
+  formRef.value?.clearValidate();
   visible.value = true;
 }
 
 function editOpen(fun: Promise<R<any>>) {
-  form.value = cloneDeep(initForm);
   dialogLoading.value = true;
+  confirmLoading.value = false;
   visible.value = true;
+  form.value = cloneDeep(initForm);
+  formRef.value?.clearValidate();
   fun.then(res => {
     form.value = res.data;
     dialogLoading.value = false;
@@ -63,24 +70,30 @@ defineExpose({
 });
 
 function confirmClick() {
-  if (!props.confirmFun) {
-    visible.value = false;
-    return;
-  }
-  confirmLoading.value = true;
+  formRef.value.validate().then(valid => {
+    if (!valid) {
+      return;
+    }
 
-  props
-    .confirmFun()
-    .then(res => {
-      confirmLoading.value = false;
+    if (!props.confirmFun) {
       visible.value = false;
-      if (props.confirmAfterFun) {
-        props.confirmAfterFun(res);
-      }
-    })
-    .catch(() => {
-      confirmLoading.value = false;
-    });
+      return;
+    }
+    confirmLoading.value = true;
+
+    props
+      .confirmFun()
+      .then(res => {
+        confirmLoading.value = false;
+        visible.value = false;
+        if (props.confirmAfterFun) {
+          props.confirmAfterFun(res);
+        }
+      })
+      .catch(() => {
+        confirmLoading.value = false;
+      });
+  });
 }
 
 const props = defineProps<IEditFormProps>();
@@ -95,7 +108,12 @@ const props = defineProps<IEditFormProps>();
     :close-on-press-escape="false"
     width="45%"
   >
-    <el-form ref="formRef" v-loading="dialogLoading" :model="form">
+    <el-form
+      ref="formRef"
+      v-loading="dialogLoading"
+      :model="form"
+      :rules="formEditRule"
+    >
       <el-row :gutter="30">
         <re-col>
           <el-form-item label="上级菜单" prop="pid">
@@ -122,11 +140,41 @@ const props = defineProps<IEditFormProps>();
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="菜单名称" prop="name" required>
+          <el-form-item label="菜单名称" prop="name">
             <el-input
               v-model="form.name"
               clearable
               placeholder="请输入菜单名称"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="菜单路径" prop="path">
+            <el-input
+              v-model="form.path"
+              clearable
+              placeholder="请输入菜单路径"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="路由路径" prop="router">
+            <el-input
+              v-model="form.router"
+              clearable
+              placeholder="请输入路由路径"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="重定向" prop="redirect">
+            <el-input
+              v-model="form.redirect"
+              clearable
+              placeholder="请输入重定向"
             />
           </el-form-item>
         </re-col>

@@ -93,6 +93,7 @@ function deleteClick(row: BaseMenuDO) {
       :confirm-fun="confirmFun"
       :confirm-after-fun="confirmAfterFun"
     />
+
     <el-form ref="searchRef" :inline="true" :model="search">
       <el-form-item label="菜单名称" prop="name">
         <el-input
@@ -139,7 +140,7 @@ function deleteClick(row: BaseMenuDO) {
           link
           type="primary"
           :icon="useRenderIcon(EditPen)"
-          @click="editClick(scope)"
+          @click="editClick(scope.row)"
         >
           修改
         </el-button>

@@ -3,13 +3,14 @@ import { ref } from "vue";
 import ReCol from "@/components/ReCol";
 import { BaseMenuInsertOrUpdateDTO } from "@/api/http/base/BaseMenuController";
 import { IEditFormProps } from "@/views/base/menu/types";
-import { cloneDeep } from "@pureadmin/utils";
 import { R } from "@/model/vo/R";
 import { formEditRule } from "@/views/base/menu/formEditRule";
+import CommonConstant from "@/model/constant/CommonConstant";
+import { IconSelect } from "@/components/ReIcon";
+import { enableFlagOptions, showFlagOptions } from "@/views/base/menu/enums";
+import ReSegmented from "@/components/ReSegmented/src";
 
-const initForm: BaseMenuInsertOrUpdateDTO = {};
-
-const form = ref<BaseMenuInsertOrUpdateDTO>(cloneDeep(initForm));
+const form = ref<BaseMenuInsertOrUpdateDTO>({});
 const formRef = ref();
 const dialogLoading = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
@@ -38,11 +39,12 @@ function getConfirmLoading() {
 function addOpen(formTemp?: BaseMenuInsertOrUpdateDTO) {
   dialogLoading.value = false;
   confirmLoading.value = false;
-  if (formTemp) {
-    form.value = formTemp;
-  } else {
-    form.value = cloneDeep(initForm);
-  }
+  form.value = {
+    orderNo: CommonConstant.DEFAULT_ORDER_NO,
+    showFlag: true,
+    enableFlag: true,
+    ...formTemp
+  };
   formRef.value?.clearValidate();
   visible.value = true;
 }
@@ -51,7 +53,7 @@ function editOpen(fun: Promise<R<any>>) {
   dialogLoading.value = true;
   confirmLoading.value = false;
   visible.value = true;
-  form.value = cloneDeep(initForm);
+  form.value = {};
   formRef.value?.clearValidate();
   fun.then(res => {
     form.value = res.data;
@@ -175,6 +177,56 @@ const props = defineProps<IEditFormProps>();
               v-model="form.redirect"
               clearable
               placeholder="请输入重定向"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="唯一标识" prop="uuid">
+            <el-input
+              v-model="form.uuid"
+              clearable
+              placeholder="请输入唯一标识"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="菜单排序" prop="orderNo">
+            <el-input-number v-model="form.orderNo" class="w-full" />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="菜单图标" prop="icon">
+            <IconSelect v-model="form.icon" class="w-full" />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="显示" prop="showFlag">
+            <re-segmented
+              :modelValue="form.showFlag ? 0 : 1"
+              :options="showFlagOptions"
+              @change="
+                ({ option: { value } }) => {
+                  form.showFlag = value;
+                }
+              "
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="启用" prop="enableFlag">
+            <re-segmented
+              :modelValue="form.enableFlag ? 0 : 1"
+              :options="enableFlagOptions"
+              @change="
+                ({ option: { value } }) => {
+                  form.enableFlag = value;
+                }
+              "
             />
           </el-form-item>
         </re-col>

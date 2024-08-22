@@ -117,7 +117,7 @@ function deleteClick(row: BaseMenuDO) {
       </el-form-item>
     </el-form>
 
-    <div class="bg-white">
+    <div class="bg-white px-5 py-3">
       <el-button
         type="primary"
         :icon="useRenderIcon(AddFill)"

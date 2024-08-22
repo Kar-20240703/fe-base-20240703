@@ -50,8 +50,8 @@ export function ExecConfirm(
   confirmFun: () => Promise<any>,
   cancelFun?: () => Promise<any>,
   msg?: string | VNode,
-  res?: (value?: any) => void,
-  rej?: (reason?: any) => void
+  resolve?: (value?: any) => void,
+  reject?: (reason?: any) => void
 ) {
   ElMessageBox({
     title: "提示",
@@ -71,20 +71,20 @@ export function ExecConfirm(
           confirmFun()
             .then(() => {
               done(); // 关闭
-              if (res) {
-                res();
+              if (resolve) {
+                resolve();
               }
             })
             .catch(() => {
               done(); // 关闭
-              if (rej) {
-                rej();
+              if (reject) {
+                reject();
               }
             });
         } else {
           done(); // 关闭
-          if (res) {
-            res();
+          if (resolve) {
+            resolve();
           }
         }
       } else {
@@ -92,20 +92,20 @@ export function ExecConfirm(
           cancelFun()
             .then(() => {
               done(); // 关闭
-              if (rej) {
-                rej();
+              if (reject) {
+                reject();
               }
             })
             .catch(() => {
               done(); // 关闭
-              if (rej) {
-                rej();
+              if (reject) {
+                reject();
               }
             });
         } else {
           done(); // 关闭
-          if (rej) {
-            rej();
+          if (reject) {
+            reject();
           }
         }
       }
@@ -119,7 +119,7 @@ export function ExecConfirmPromise(
   cancelFun?: () => Promise<void>,
   msg?: VNode
 ) {
-  return new Promise<any>((res, rej) => {
-    ExecConfirm(confirmFun, cancelFun, msg, res, rej);
+  return new Promise<any>((resolve, reject) => {
+    ExecConfirm(confirmFun, cancelFun, msg, resolve, reject);
   });
 }

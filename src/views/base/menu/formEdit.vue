@@ -68,10 +68,15 @@ function confirmClick() {
     return;
   }
   confirmLoading.value = true;
-  props.confirmFun
-    .then(() => {
+
+  props
+    .confirmFun()
+    .then(res => {
       confirmLoading.value = false;
       visible.value = false;
+      if (props.confirmAfterFun) {
+        props.confirmAfterFun(res);
+      }
     })
     .catch(() => {
       confirmLoading.value = false;
@@ -84,13 +89,13 @@ const props = defineProps<IEditFormProps>();
 <template>
   <el-dialog
     v-model="visible"
-    v-loading="dialogLoading"
     :title="props.title"
     draggable
     :close-on-click-modal="false"
     :close-on-press-escape="false"
+    width="45%"
   >
-    <el-form ref="formRef" :model="form">
+    <el-form ref="formRef" v-loading="dialogLoading" :model="form">
       <el-row :gutter="30">
         <re-col>
           <el-form-item label="上级菜单" prop="pid">
@@ -117,7 +122,7 @@ const props = defineProps<IEditFormProps>();
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="菜单名称" prop="name">
+          <el-form-item label="菜单名称" prop="name" required>
             <el-input
               v-model="form.name"
               clearable
@@ -132,7 +137,7 @@ const props = defineProps<IEditFormProps>();
       <div>
         <el-button @click="visible = false">取消</el-button>
         <el-button
-          v-loading="confirmLoading"
+          :loading="confirmLoading"
           type="primary"
           @click="confirmClick"
         >

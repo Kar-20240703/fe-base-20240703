@@ -61,11 +61,13 @@ function addClick(row: BaseMenuDO) {
   formRef.value.addOpen(row);
 }
 
-async function confirmFun() {
-  await baseMenuInsertOrUpdate(formRef.value.getForm().value).then(res => {
-    ToastSuccess(res.msg);
-    onSearch();
-  });
+function confirmFun() {
+  return baseMenuInsertOrUpdate(formRef.value.getForm().value);
+}
+
+function confirmAfterFun(res) {
+  ToastSuccess(res.msg);
+  onSearch();
 }
 
 function deleteClick(row: BaseMenuDO) {
@@ -86,11 +88,11 @@ function deleteClick(row: BaseMenuDO) {
   <div class="flex flex-col">
     <form-edit
       ref="formRef"
-      :higherMenuOptions="higherMenuOptions"
+      :higher-menu-options="higherMenuOptions"
       :title="title"
-      :confirmFun="confirmFun"
+      :confirm-fun="confirmFun"
+      :confirm-after-fun="confirmAfterFun"
     />
-
     <el-form ref="searchRef" :inline="true" :model="search">
       <el-form-item label="菜单名称" prop="name">
         <el-input

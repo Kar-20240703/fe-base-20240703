@@ -100,6 +100,7 @@ function deleteClick(row: BaseMenuDO) {
           v-model="search.name"
           placeholder="请输入菜单名称"
           clearable
+          class="!w-[180px]"
         />
       </el-form-item>
       <el-form-item>
@@ -117,50 +118,58 @@ function deleteClick(row: BaseMenuDO) {
       </el-form-item>
     </el-form>
 
-    <div class="bg-white px-5 py-3">
-      <el-button
-        type="primary"
-        :icon="useRenderIcon(AddFill)"
-        @click="addClick({})"
-      >
-        新增菜单
-      </el-button>
-    </div>
-
-    <el-table v-loading="loading" :data="dataList" border row-key="id">
-      <el-table-column prop="name" label="菜单名称" />
-      <el-table-column prop="path" label="路由路径" />
-      <el-table-column #default="scope" prop="component" label="组件路径">
-        {{ scope.row.component || scope.row.path }}
-      </el-table-column>
-      <el-table-column prop="orderNo" label="排序" />
-      <el-table-column prop="showFlag" label="隐藏" />
-      <el-table-column #default="scope" label="操作">
+    <div class="flex flex-col px-5 py-3 bg-white">
+      <div class="pb-3">
         <el-button
-          link
-          type="primary"
-          :icon="useRenderIcon(EditPen)"
-          @click="editClick(scope.row)"
-        >
-          修改
-        </el-button>
-        <el-button
-          link
           type="primary"
           :icon="useRenderIcon(AddFill)"
-          @click="addClick({ pid: scope.row.id })"
+          @click="addClick({})"
         >
-          新增
+          新增菜单
         </el-button>
-        <el-button
-          link
-          type="primary"
-          :icon="useRenderIcon(Delete)"
-          @click="deleteClick(scope.row)"
-        >
-          删除
-        </el-button>
-      </el-table-column>
-    </el-table>
+      </div>
+
+      <el-table
+        v-loading="loading"
+        :data="dataList"
+        border
+        row-key="id"
+        default-expand-all
+      >
+        <el-table-column prop="name" label="菜单名称" />
+        <el-table-column prop="path" label="路由路径" />
+        <el-table-column #default="scope" prop="component" label="组件路径">
+          {{ scope.row.component || scope.row.path }}
+        </el-table-column>
+        <el-table-column prop="orderNo" label="排序" />
+        <el-table-column prop="showFlag" label="隐藏" />
+        <el-table-column #default="scope" label="操作">
+          <el-button
+            link
+            type="primary"
+            :icon="useRenderIcon(EditPen)"
+            @click="editClick(scope.row)"
+          >
+            修改
+          </el-button>
+          <el-button
+            link
+            type="primary"
+            :icon="useRenderIcon(AddFill)"
+            @click="addClick({ pid: scope.row.id })"
+          >
+            新增
+          </el-button>
+          <el-button
+            link
+            type="primary"
+            :icon="useRenderIcon(Delete)"
+            @click="deleteClick(scope.row)"
+          >
+            删除
+          </el-button>
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>

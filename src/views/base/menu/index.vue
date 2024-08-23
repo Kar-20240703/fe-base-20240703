@@ -182,7 +182,7 @@ function onExpand() {
         >
           {{ scope.row.showFlag ? "否" : "是" }}
         </el-table-column>
-        <el-table-column prop="uuid" label="唯一标识" width="100" />
+        <el-table-column prop="uuid" label="唯一标识" />
         <el-table-column #default="scope" label="操作">
           <el-button
             link

@@ -18,8 +18,8 @@ const currentActiveType = ref("ep:");
 // 深拷贝图标数据，前端做搜索
 const copyIconList = cloneDeep(iconList.value);
 const totalPage = ref(0);
-// 每页显示35个图标
-const pageSize = ref(35);
+// 每页显示40个图标
+const pageSize = ref(40);
 const currentPage = ref(1);
 
 // 搜索条件
@@ -125,7 +125,7 @@ watch(
     <el-input v-model="inputValue" disabled>
       <template #append>
         <el-popover
-          :width="350"
+          :width="394"
           trigger="click"
           popper-class="pure-popper"
           :popper-options="{
@@ -192,7 +192,7 @@ watch(
               :current-page="currentPage"
               :page-size="pageSize"
               :pager-count="5"
-              layout="pager"
+              layout="prev, pager, next"
               background
               size="small"
               @current-change="onCurrentChange"

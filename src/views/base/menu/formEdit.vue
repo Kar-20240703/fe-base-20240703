@@ -109,6 +109,7 @@ const props = defineProps<IEditFormProps>();
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     width="45%"
+    destroy-on-close
   >
     <el-form
       ref="formRef"

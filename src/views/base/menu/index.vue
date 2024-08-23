@@ -28,11 +28,14 @@ defineOptions({
 
 const search = ref<BaseMenuPageDTO>({});
 const searchRef = ref();
+
 const loading = ref<boolean>(false);
 const dataList = ref<BaseMenuDO[]>([]);
+
 const formRef = ref();
 const higherMenuOptions = ref<BaseMenuDO[]>([]);
 const title = ref<string>("");
+
 const tableRef = ref();
 const isExpandAll = ref<boolean>(true);
 

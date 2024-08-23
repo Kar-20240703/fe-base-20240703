@@ -99,14 +99,6 @@ function onExpand() {
 
 <template>
   <div class="flex flex-col">
-    <form-edit
-      ref="formRef"
-      :higher-menu-options="higherMenuOptions"
-      :title="title"
-      :confirm-fun="confirmFun"
-      :confirm-after-fun="confirmAfterFun"
-    />
-
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
         <el-form-item label="菜单名称：" prop="name">
@@ -167,15 +159,30 @@ function onExpand() {
           color: 'var(--el-text-color-primary)'
         }"
         :default-expand-all="isExpandAll"
+        show-overflow-tooltip
       >
         <el-table-column type="selection" />
-        <el-table-column prop="name" label="菜单名称" />
-        <el-table-column prop="path" label="路由路径" />
-        <el-table-column #default="scope" prop="component" label="组件路径">
-          {{ scope.row.component || scope.row.path }}
+        <el-table-column #default="scope" prop="name" label="菜单名称">
+          <span class="flex items-center">
+            <component
+              :is="useRenderIcon(scope.row.icon)"
+              v-if="scope.row.icon"
+              class="w-3 h-3 mr-1"
+            />
+            {{ scope.row.name }}
+          </span>
         </el-table-column>
-        <el-table-column prop="orderNo" label="排序" />
-        <el-table-column prop="showFlag" label="隐藏" />
+        <el-table-column prop="path" label="路由路径" />
+        <el-table-column prop="orderNo" label="排序" width="100" />
+        <el-table-column
+          #default="scope"
+          prop="showFlag"
+          label="隐藏"
+          width="100"
+        >
+          {{ scope.row.showFlag ? "否" : "是" }}
+        </el-table-column>
+        <el-table-column prop="uuid" label="唯一标识" width="100" />
         <el-table-column #default="scope" label="操作">
           <el-button
             link
@@ -204,6 +211,14 @@ function onExpand() {
         </el-table-column>
       </el-table>
     </div>
+
+    <form-edit
+      ref="formRef"
+      :higher-menu-options="higherMenuOptions"
+      :title="title"
+      :confirm-fun="confirmFun"
+      :confirm-after-fun="confirmAfterFun"
+    />
   </div>
 </template>
 
@@ -212,5 +227,10 @@ function onExpand() {
   :deep(.el-form-item) {
     margin-bottom: 12px;
   }
+}
+
+:deep(td.el-table_1_column_2.el-table__cell > div) {
+  display: flex;
+  align-items: center;
 }
 </style>

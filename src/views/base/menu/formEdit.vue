@@ -194,7 +194,11 @@ const props = defineProps<IEditFormProps>();
 
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="菜单排序" prop="orderNo">
-            <el-input-number v-model="form.orderNo" class="w-full" />
+            <el-input-number
+              v-model="form.orderNo"
+              class="w-full"
+              :step="100"
+            />
           </el-form-item>
         </re-col>
 
@@ -229,6 +233,31 @@ const props = defineProps<IEditFormProps>();
                 }
               "
             />
+          </el-form-item>
+        </re-col>
+
+        <re-col>
+          <el-form-item label="关联角色" prop="roleIdSet">
+            <el-select
+              v-model="form.roleIdSet"
+              placeholder="请选择"
+              class="w-full"
+              clearable
+              multiple
+              filterable
+            >
+              <el-option
+                v-for="item in [
+                  { id: '1', name: '管理员' },
+                  { id: '2', name: '游客' }
+                ]"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"
+              >
+                {{ item.name }}
+              </el-option>
+            </el-select>
           </el-form-item>
         </re-col>
       </el-row>

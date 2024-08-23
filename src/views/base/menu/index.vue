@@ -232,7 +232,7 @@ function onExpand() {
   }
 }
 
-:deep(td.el-table_1_column_2.el-table__cell > div) {
+:deep(td.el-table__cell > div) {
   display: flex;
   align-items: center;
 }

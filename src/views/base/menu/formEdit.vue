@@ -115,6 +115,7 @@ const props = defineProps<IEditFormProps>();
       v-loading="dialogLoading"
       :model="form"
       :rules="formEditRule"
+      label-width="auto"
     >
       <el-row :gutter="30">
         <re-col>

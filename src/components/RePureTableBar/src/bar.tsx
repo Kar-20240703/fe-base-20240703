@@ -23,6 +23,35 @@ import RefreshIcon from "@/assets/table-bar/refresh.svg?component";
 import SettingIcon from "@/assets/table-bar/settings.svg?component";
 import CollapseIcon from "@/assets/table-bar/collapse.svg?component";
 
+export const ICON_CLASS = [
+  "text-black",
+  "dark:text-white",
+  "duration-100",
+  "hover:!text-primary",
+  "cursor-pointer",
+  "outline-none"
+];
+
+export const RendTippyProps = (content: string) => {
+  // https://vue-tippy.netlify.app/props
+  return {
+    content,
+    offset: [0, 18],
+    duration: [300, 0],
+    followCursor: true,
+    hideOnClick: "toggle"
+  };
+};
+
+export function ToggleRowExpansionAll(data, isExpansion, tableRef) {
+  data.forEach(item => {
+    tableRef.toggleRowExpansion(item, isExpansion);
+    if (item.children !== undefined && item.children !== null) {
+      ToggleRowExpansionAll(item.children, isExpansion, tableRef);
+    }
+  });
+}
+
 const props = {
   /** 头部最左边的标题 */
   title: {

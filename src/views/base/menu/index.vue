@@ -15,6 +15,12 @@ import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
+import ExpandIcon from "@/assets/table-bar/expand.svg?component";
+import {
+  ICON_CLASS,
+  RendTippyProps,
+  ToggleRowExpansionAll
+} from "@/components/RePureTableBar/src/bar";
 
 defineOptions({
   name: "BaseMenu"
@@ -27,6 +33,8 @@ const dataList = ref<BaseMenuDO[]>([]);
 const formRef = ref();
 const higherMenuOptions = ref<BaseMenuDO[]>([]);
 const title = ref<string>("");
+const tableRef = ref();
+const isExpandAll = ref<boolean>(true);
 
 onMounted(() => {
   onSearch();
@@ -82,6 +90,11 @@ function deleteClick(row: BaseMenuDO) {
     `确定删除【${row.name}】吗？`
   );
 }
+
+function onExpand() {
+  isExpandAll.value = !isExpandAll.value;
+  ToggleRowExpansionAll(dataList.value, isExpandAll.value, tableRef.value);
+}
 </script>
 
 <template>
@@ -94,48 +107,68 @@ function deleteClick(row: BaseMenuDO) {
       :confirm-after-fun="confirmAfterFun"
     />
 
-    <el-form ref="searchRef" :inline="true" :model="search">
-      <el-form-item label="菜单名称" prop="name">
-        <el-input
-          v-model="search.name"
-          placeholder="请输入菜单名称"
-          clearable
-          class="!w-[180px]"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon('ri:search-line')"
-          :loading="loading"
-          @click="onSearch"
-        >
-          搜索
-        </el-button>
-        <el-button :icon="useRenderIcon(Refresh)" @click="resetSearch()">
-          重置
-        </el-button>
-      </el-form-item>
-    </el-form>
+    <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
+      <el-form ref="searchRef" :inline="true" :model="search">
+        <el-form-item label="菜单名称：" prop="name">
+          <el-input
+            v-model="search.name"
+            placeholder="请输入菜单名称"
+            clearable
+            class="!w-[180px]"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon('ri:search-line')"
+            :loading="loading"
+            @click="onSearch"
+          >
+            搜索
+          </el-button>
+          <el-button :icon="useRenderIcon(Refresh)" @click="resetSearch()">
+            重置
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </div>
 
-    <div class="flex flex-col px-5 py-3 bg-white">
-      <div class="pb-3">
-        <el-button
-          type="primary"
-          :icon="useRenderIcon(AddFill)"
-          @click="addClick({})"
-        >
-          新增菜单
-        </el-button>
+    <div class="flex flex-col px-5 py-3 bg-bg_color">
+      <div class="pb-3 flex justify-between">
+        <div>
+          <ExpandIcon
+            v-tippy="RendTippyProps(isExpandAll ? '折叠' : '展开')"
+            :class="['w-[16px]', ICON_CLASS]"
+            :style="{
+              transform: isExpandAll ? 'none' : 'rotate(-90deg)'
+            }"
+            @click="onExpand"
+          />
+        </div>
+
+        <div>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(AddFill)"
+            @click="addClick({})"
+          >
+            新增菜单
+          </el-button>
+        </div>
       </div>
 
       <el-table
+        ref="tableRef"
         v-loading="loading"
         :data="dataList"
-        border
         row-key="id"
-        default-expand-all
+        :header-cell-style="{
+          background: 'var(--el-fill-color-light)',
+          color: 'var(--el-text-color-primary)'
+        }"
+        :default-expand-all="isExpandAll"
       >
+        <el-table-column type="selection" />
         <el-table-column prop="name" label="菜单名称" />
         <el-table-column prop="path" label="路由路径" />
         <el-table-column #default="scope" prop="component" label="组件路径">
@@ -173,3 +206,11 @@ function deleteClick(row: BaseMenuDO) {
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.search-form {
+  :deep(.el-form-item) {
+    margin-bottom: 12px;
+  }
+}
+</style>

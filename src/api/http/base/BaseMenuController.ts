@@ -148,6 +148,19 @@ export function baseMenuTree(
   );
 }
 
+// 通过主键 idSet，修改排序号
+export function baseMenuUpdateOrderNo(
+  form: ChangeNumberDTO,
+  config?: PureHttpRequestConfig
+) {
+  return http.request<string>(
+    "post",
+    baseApi("/base/menu/updateOrderNo"),
+    form,
+    config
+  );
+}
+
 export interface BaseMenuInsertOrUpdateDTO {
   redirect?: string; // 重定向，优先级最高
   linkFlag?: boolean; // 是否外链，即，打开页面会在一个新的窗口打开

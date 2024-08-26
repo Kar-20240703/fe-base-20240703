@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import {
+  baseMenuAddOrderNo,
   baseMenuDeleteByIdSet,
   BaseMenuDO,
   baseMenuInfoById,
   baseMenuInsertOrUpdate,
   BaseMenuPageDTO,
-  baseMenuTree
+  baseMenuTree,
+  baseMenuUpdateOrderNo
 } from "@/api/http/base/BaseMenuController";
 import formEdit from "@/views/base/menu/formEdit.vue";
-import { ExecConfirm, ToastSuccess } from "@/utils/ToastUtil";
+import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
+import MenuAddFill from "@iconify-icons/ri/menu-add-fill";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
 import ExpandIcon from "@/assets/table-bar/expand.svg?component";
@@ -21,6 +24,7 @@ import {
   RendTippyProps,
   ToggleRowExpansionAll
 } from "@/components/RePureTableBar/src/bar";
+import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
 
 defineOptions({
   name: "BaseMenu"
@@ -33,11 +37,15 @@ const loading = ref<boolean>(false);
 const dataList = ref<BaseMenuDO[]>([]);
 
 const formRef = ref();
-const higherMenuOptions = ref<BaseMenuDO[]>([]);
+const parentOptions = ref<BaseMenuDO[]>([]);
 const title = ref<string>("");
 
 const tableRef = ref();
 const isExpandAll = ref<boolean>(true);
+
+const selectIdArr = ref<string[]>([]);
+
+const addOrderNoFormRef = ref();
 
 onMounted(() => {
   onSearch();
@@ -49,7 +57,7 @@ function onSearch() {
     .then(res => {
       dataList.value = res.data;
       if (Object.keys(search.value).length === 0) {
-        higherMenuOptions.value = res.data;
+        parentOptions.value = res.data;
       }
     })
     .finally(() => {
@@ -76,7 +84,8 @@ function confirmFun() {
   return baseMenuInsertOrUpdate(formRef.value.getForm().value);
 }
 
-function confirmAfterFun(res) {
+function confirmAfterFun(res, done) {
+  done();
   ToastSuccess(res.msg);
   onSearch();
 }
@@ -94,9 +103,60 @@ function deleteClick(row: BaseMenuDO) {
   );
 }
 
+function deleteBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  ExecConfirm(
+    async () => {
+      await baseMenuDeleteByIdSet({ idSet: selectIdArr.value }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定删除勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
 function onExpand() {
   isExpandAll.value = !isExpandAll.value;
   ToggleRowExpansionAll(dataList.value, isExpandAll.value, tableRef.value);
+}
+
+function orderNoChange(row: BaseMenuDO) {
+  baseMenuUpdateOrderNo({ idSet: [row.id], number: String(row.orderNo) }).then(
+    res => {
+      ToastSuccess(res.msg);
+      onSearch();
+    }
+  );
+}
+
+function addOrderNoBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  addOrderNoFormRef.value.open();
+}
+
+function onSelectChange(rowArr?: BaseMenuDO[]) {
+  selectIdArr.value = rowArr.map(it => it.id);
+}
+
+function addOrderNoConfirmFun() {
+  return baseMenuAddOrderNo({
+    idSet: selectIdArr.value,
+    number: addOrderNoFormRef.value.getForm().value.number
+  });
+}
+
+function addOrderNoConfirmAfterFun(res, done) {
+  done();
+  ToastSuccess(res.msg);
+  onSearch();
 }
 </script>
 
@@ -149,6 +209,20 @@ function onExpand() {
           >
             新增菜单
           </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(MenuAddFill)"
+            @click="addOrderNoBySelectIdArr"
+          >
+            累加排序号
+          </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(Delete)"
+            @click="deleteBySelectIdArr"
+          >
+            批量删除
+          </el-button>
         </div>
       </div>
 
@@ -163,6 +237,7 @@ function onExpand() {
         }"
         :default-expand-all="isExpandAll"
         show-overflow-tooltip
+        @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
         <el-table-column #default="scope" prop="name" label="菜单名称">
@@ -176,7 +251,15 @@ function onExpand() {
           </span>
         </el-table-column>
         <el-table-column prop="path" label="路由路径" />
-        <el-table-column prop="orderNo" label="排序" width="100" />
+        <el-table-column #default="scope" prop="orderNo" label="排序">
+          <el-input-number
+            v-model="scope.row.orderNo"
+            class="w-full"
+            :step="100"
+            controls-position="right"
+            @change="orderNoChange(scope.row)"
+          />
+        </el-table-column>
         <el-table-column
           #default="scope"
           prop="showFlag"
@@ -217,10 +300,16 @@ function onExpand() {
 
     <form-edit
       ref="formRef"
-      :higher-menu-options="higherMenuOptions"
+      :parent-options="parentOptions"
       :title="title"
       :confirm-fun="confirmFun"
       :confirm-after-fun="confirmAfterFun"
+    />
+
+    <kar-add-order-no
+      ref="addOrderNoFormRef"
+      :confirm-fun="addOrderNoConfirmFun"
+      :confirm-after-fun="addOrderNoConfirmAfterFun"
     />
   </div>
 </template>

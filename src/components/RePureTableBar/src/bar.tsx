@@ -45,8 +45,12 @@ export const RendTippyProps = (content: string) => {
 
 export function ToggleRowExpansionAll(data, isExpansion, tableRef) {
   data.forEach(item => {
-    tableRef.toggleRowExpansion(item, isExpansion);
-    if (item.children !== undefined && item.children !== null) {
+    if (
+      item.children !== undefined &&
+      item.children !== null &&
+      item.children.length !== 0
+    ) {
+      tableRef.toggleRowExpansion(item, isExpansion);
       ToggleRowExpansionAll(item.children, isExpansion, tableRef);
     }
   });

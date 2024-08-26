@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ReCol from "@/components/ReCol";
-import { BaseMenuInsertOrUpdateDTO } from "@/api/http/base/BaseMenuController";
-import { IEditFormProps } from "@/views/base/menu/types";
+import {
+  BaseMenuDO,
+  BaseMenuInsertOrUpdateDTO
+} from "@/api/http/base/BaseMenuController";
 import { R } from "@/model/vo/R";
 import { formEditRule } from "@/views/base/menu/formEditRule";
 import CommonConstant from "@/model/constant/CommonConstant";
 import { IconSelect } from "@/components/ReIcon";
 import { enableFlagOptions, showFlagOptions } from "@/views/base/menu/enums";
 import ReSegmented from "@/components/ReSegmented/src";
+import {
+  doConfirmClick,
+  doOpen,
+  IDialogTreeFormProps
+} from "@/model/types/IDialogFormProps";
 
 const form = ref<BaseMenuInsertOrUpdateDTO>({});
 const formRef = ref();
@@ -17,7 +24,7 @@ const confirmLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 
 function getRef() {
-  return formRef.value;
+  return formRef;
 }
 
 function getForm() {
@@ -37,16 +44,19 @@ function getConfirmLoading() {
 }
 
 function addOpen(formTemp?: BaseMenuInsertOrUpdateDTO) {
-  dialogLoading.value = false;
-  confirmLoading.value = false;
-  form.value = {
-    orderNo: CommonConstant.DEFAULT_ORDER_NO,
-    showFlag: true,
-    enableFlag: true,
-    ...formTemp
-  };
-  formRef.value?.clearValidate();
-  visible.value = true;
+  doOpen(
+    formRef,
+    form,
+    visible,
+    confirmLoading,
+    {
+      orderNo: CommonConstant.DEFAULT_ORDER_NO,
+      showFlag: true,
+      enableFlag: true,
+      ...formTemp
+    },
+    dialogLoading
+  );
 }
 
 function editOpen(fun: Promise<R<any>>) {
@@ -71,34 +81,11 @@ defineExpose({
   editOpen
 });
 
+const props = defineProps<IDialogTreeFormProps<BaseMenuDO>>();
+
 function confirmClick() {
-  formRef.value.validate().then(valid => {
-    if (!valid) {
-      return;
-    }
-
-    if (!props.confirmFun) {
-      visible.value = false;
-      return;
-    }
-    confirmLoading.value = true;
-
-    props
-      .confirmFun()
-      .then(res => {
-        confirmLoading.value = false;
-        visible.value = false;
-        if (props.confirmAfterFun) {
-          props.confirmAfterFun(res);
-        }
-      })
-      .catch(() => {
-        confirmLoading.value = false;
-      });
-  });
+  doConfirmClick(formRef, props, visible, confirmLoading);
 }
-
-const props = defineProps<IEditFormProps>();
 </script>
 
 <template>
@@ -124,7 +111,7 @@ const props = defineProps<IEditFormProps>();
             <el-cascader
               v-model="form.pid"
               class="w-full"
-              :options="props.higherMenuOptions as any"
+              :options="props.parentOptions as any"
               :props="{
                 value: 'id',
                 label: 'name',
@@ -197,7 +184,7 @@ const props = defineProps<IEditFormProps>();
           <el-form-item label="菜单排序" prop="orderNo">
             <el-input-number
               v-model="form.orderNo"
-              class="w-full"
+              class="!w-full"
               :step="100"
             />
           </el-form-item>

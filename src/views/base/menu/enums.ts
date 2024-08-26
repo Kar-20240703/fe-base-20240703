@@ -12,14 +12,3 @@ export const showFlagOptions: Array<OptionsType> = [
     value: false
   }
 ];
-
-export const enableFlagOptions: Array<OptionsType> = [
-  {
-    label: "启用",
-    value: true
-  },
-  {
-    label: "禁用",
-    value: false
-  }
-];

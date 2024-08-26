@@ -9,13 +9,14 @@ import { R } from "@/model/vo/R";
 import { formEditRule } from "@/views/base/menu/formEditRule";
 import CommonConstant from "@/model/constant/CommonConstant";
 import { IconSelect } from "@/components/ReIcon";
-import { enableFlagOptions, showFlagOptions } from "@/views/base/menu/enums";
+import { showFlagOptions } from "@/views/base/menu/enums";
 import ReSegmented from "@/components/ReSegmented/src";
 import {
   doConfirmClick,
   doOpen,
   IDialogTreeFormProps
 } from "@/model/types/IDialogFormProps";
+import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
 
 const form = ref<BaseMenuInsertOrUpdateDTO>({});
 const formRef = ref();

@@ -32,6 +32,9 @@ const searchRef = ref();
 
 const loading = ref<boolean>(false);
 const dataList = ref<BaseRoleDO[]>([]);
+const total = ref<number>(0);
+const currentPage = ref<number>(1);
+const pageSize = ref<number>(15);
 
 const formRef = ref();
 const title = ref<string>("");
@@ -70,9 +73,14 @@ function initMenuDictList() {
 
 function onSearch() {
   loading.value = true;
-  baseRolePage(search.value)
+  baseRolePage({
+    ...search.value,
+    current: currentPage.value as any,
+    pageSize: pageSize.value as any
+  })
     .then(res => {
       dataList.value = res.data.records;
+      total.value = res.data.total;
     })
     .finally(() => {
       loading.value = false;
@@ -228,6 +236,16 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
           </el-button>
         </el-table-column>
       </el-table>
+
+      <el-pagination
+        v-model:page-size="pageSize"
+        v-model:current-page="currentPage"
+        class="mt-3"
+        layout="->, prev, pager, next, jumper, sizes, total"
+        :total="total"
+        :page-sizes="[15, 50, 100]"
+        @change="onSearch"
+      />
     </div>
 
     <form-edit

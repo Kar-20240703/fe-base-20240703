@@ -102,7 +102,7 @@ function confirmClick() {
             <el-input
               v-model="form.name"
               clearable
-              placeholder="请输入菜单名称"
+              placeholder="请输入角色名称"
             />
           </el-form-item>
         </re-col>

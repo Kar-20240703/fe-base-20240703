@@ -91,6 +91,21 @@ export function baseAuthInfoById(
   );
 }
 
+export interface DictVO {
+  name?: string; // 显示用
+  id?: string; // 传值用，format：int64
+}
+
+// 下拉列表
+export function baseAuthDictList(config?: PureHttpRequestConfig) {
+  return http.request<Page<DictVO>>(
+    "post",
+    baseApi("/base/auth/dictList"),
+    undefined,
+    config
+  );
+}
+
 export interface NotEmptyIdSet {
   idSet?: string[]; // 主键 idSet，required：true，format：int64
 }

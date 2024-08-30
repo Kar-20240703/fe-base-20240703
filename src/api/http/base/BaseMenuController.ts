@@ -43,7 +43,7 @@ export interface BaseMenuDO {
   updateTime?: string; // 修改时间，format：date-time
   remark?: string; // 备注
   pid?: string; // 父节点id（顶级则为0），format：int64
-  uuid?: string; // 该菜单的 uuid，用于：同步租户菜单等操作，备注：不能重复
+  uuid?: string; // 该菜单的 uuid，备注：不能重复
   showFlag?: boolean; // 是否显示在 左侧的菜单栏里面，如果为 false，也可以通过 $router.push()访问到
   updateId?: string; // 修改人id，format：int64
   path?: string; // 页面的 path，备注：不能重复
@@ -109,7 +109,7 @@ export interface BaseMenuInfoByIdVO {
   updateTime?: string; // 修改时间，format：date-time
   remark?: string; // 备注
   pid?: string; // 父节点id（顶级则为0），format：int64
-  uuid?: string; // 该菜单的 uuid，用于：同步租户菜单等操作，备注：不能重复
+  uuid?: string; // 该菜单的 uuid，备注：不能重复
   showFlag?: boolean; // 是否显示在 左侧的菜单栏里面，如果为 false，也可以通过 $router.push()访问到
   updateId?: string; // 修改人id，format：int64
   path?: string; // 页面的 path，备注：不能重复
@@ -132,6 +132,16 @@ export function baseMenuInfoById(
     "post",
     baseApi("/base/menu/infoById"),
     form,
+    config
+  );
+}
+
+// 下拉树形列表
+export function baseMenuDictTreeList(config?: PureHttpRequestConfig) {
+  return http.request<BaseMenuDO[]>(
+    "post",
+    baseApi("/base/menu/dictTreeList"),
+    undefined,
     config
   );
 }
@@ -169,7 +179,7 @@ export interface BaseMenuInsertOrUpdateDTO {
   icon?: string; // 图标
   pid?: string; // 父节点id（顶级则为0），format：int64
   remark?: string; // 备注
-  uuid?: string; // 该菜单的 uuid，用于：同步租户菜单等操作，备注：不能重复
+  uuid?: string; // 该菜单的 uuid，备注：不能重复
   showFlag?: boolean; // 是否显示在 左侧的菜单栏里面，如果为 false，也可以通过 $router.push()访问到
   path?: string; // 页面的 path，备注：不能重复
   router?: string; // 路由

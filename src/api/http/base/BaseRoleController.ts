@@ -24,7 +24,7 @@ export interface BaseRoleDO {
   remark?: string; // 备注
   id?: string; // 主键 id，format：int64
   enableFlag?: boolean; // 是否启用
-  value?: string; // 角色值（不能重复）
+  uuid?: string; // 唯一标识（不能重复）
 }
 
 // 分页排序查询
@@ -48,6 +48,7 @@ export interface BaseRoleInsertOrUpdateDTO {
   authIdSet?: string[]; // 权限idSet，format：int64
   remark?: string; // 备注
   id?: string; // 主键 id，format：int64
+  uuid?: string; // 唯一标识（不能重复）
   enableFlag?: boolean; // 是否启用
 }
 
@@ -60,6 +61,21 @@ export function baseRoleInsertOrUpdate(
     "post",
     baseApi("/base/role/insertOrUpdate"),
     form,
+    config
+  );
+}
+
+export interface DictVO {
+  name?: string; // 显示用
+  id?: string; // 传值用，format：int64
+}
+
+// 下拉列表
+export function baseRoleDictList(config?: PureHttpRequestConfig) {
+  return http.request<Page<DictVO>>(
+    "post",
+    baseApi("/base/role/dictList"),
+    undefined,
     config
   );
 }
@@ -92,13 +108,13 @@ export interface BaseRoleInfoByIdVO {
   updateTime?: string; // 修改时间，format：date-time
   remark?: string; // 备注
   authIdSet?: string[]; // 权限idSet，format：int64
+  uuid?: string; // 唯一标识（不能重复）
   updateId?: string; // 修改人id，format：int64
   createTime?: string; // 创建时间，format：date-time
   createId?: string; // 创建人id，format：int64
   name?: string; // 角色名（不能重复）
   id?: string; // 主键 id，format：int64
   enableFlag?: boolean; // 是否启用
-  value?: string; // 角色值（不能重复）
 }
 
 // 通过主键id，查看详情

@@ -25,6 +25,7 @@ import {
   ToggleRowExpansionAll
 } from "@/components/RePureTableBar/src/bar";
 import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
+import { baseRoleDictList, DictVO } from "@/api/http/base/BaseRoleController";
 
 defineOptions({
   name: "BaseMenu"
@@ -39,6 +40,7 @@ const dataList = ref<BaseMenuDO[]>([]);
 const formRef = ref();
 const parentOptions = ref<BaseMenuDO[]>([]);
 const title = ref<string>("");
+const roleDictList = ref<DictVO[]>([]);
 
 const tableRef = ref();
 const isExpandAll = ref<boolean>(true);
@@ -49,7 +51,14 @@ const addOrderNoFormRef = ref();
 
 onMounted(() => {
   onSearch();
+  initRoleDictList();
 });
+
+function initRoleDictList() {
+  baseRoleDictList().then(res => {
+    roleDictList.value = res.data.records;
+  });
+}
 
 function onSearch() {
   loading.value = true;
@@ -304,6 +313,7 @@ function addOrderNoConfirmAfterFun(res, done) {
       :title="title"
       :confirm-fun="confirmFun"
       :confirm-after-fun="confirmAfterFun"
+      :role-dict-list="roleDictList"
     />
 
     <kar-add-order-no

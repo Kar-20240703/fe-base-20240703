@@ -12,8 +12,16 @@ import {
   baseRoleInfoById,
   baseRoleInsertOrUpdate,
   baseRolePage,
-  BaseRolePageDTO
+  BaseRolePageDTO,
+  DictVO
 } from "@/api/http/base/BaseRoleController";
+import FormEdit from "@/views/base/role/formEdit.vue";
+import { baseAuthDictList } from "@/api/http/base/BaseAuthController";
+import {
+  baseMenuDictTreeList,
+  BaseMenuDO
+} from "@/api/http/base/BaseMenuController";
+import { baseUserDictList } from "@/api/http/base/BaseUserController";
 
 defineOptions({
   name: "BaseRole"
@@ -27,6 +35,9 @@ const dataList = ref<BaseRoleDO[]>([]);
 
 const formRef = ref();
 const title = ref<string>("");
+const userDictList = ref<DictVO[]>([]);
+const authDictList = ref<DictVO[]>([]);
+const menuDictList = ref<BaseMenuDO[]>([]);
 
 const tableRef = ref();
 
@@ -34,7 +45,28 @@ const selectIdArr = ref<string[]>([]);
 
 onMounted(() => {
   onSearch();
+  initAuthDictList();
+  initMenuDictList();
+  initUserDictList();
 });
+
+function initUserDictList() {
+  baseUserDictList({ addAdminFlag: false }).then(res => {
+    userDictList.value = res.data.records;
+  });
+}
+
+function initAuthDictList() {
+  baseAuthDictList().then(res => {
+    authDictList.value = res.data.records;
+  });
+}
+
+function initMenuDictList() {
+  baseMenuDictTreeList().then(res => {
+    menuDictList.value = res.data;
+  });
+}
 
 function onSearch() {
   loading.value = true;
@@ -173,7 +205,7 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
         <el-table-column #default="scope" prop="name" label="角色名称">
           <span class="flex items-center">
             {{ scope.row.name }}
-            <span v-if="scope.row.defaultFlag" class="ml-1"> （默认） </span>
+            <span v-if="scope.row.defaultFlag"> （默认） </span>
           </span>
         </el-table-column>
         <el-table-column prop="uuid" label="唯一标识" />
@@ -197,6 +229,16 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
         </el-table-column>
       </el-table>
     </div>
+
+    <form-edit
+      ref="formRef"
+      :title="title"
+      :confirm-fun="confirmFun"
+      :confirm-after-fun="confirmAfterFun"
+      :auth-dict-list="authDictList"
+      :menu-dict-list="menuDictList"
+      :user-dict-list="userDictList"
+    />
   </div>
 </template>
 

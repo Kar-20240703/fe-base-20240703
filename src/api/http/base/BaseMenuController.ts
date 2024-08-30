@@ -1,3 +1,4 @@
+import type { Page } from "@/model/vo/Page";
 import type MyOrderDTO from "@/model/dto/MyOrderDTO";
 import { http } from "@/utils/http";
 import { baseApi } from "@/api/http/utils";
@@ -60,7 +61,7 @@ export function baseMenuPage(
   form: BaseMenuPageDTO,
   config?: PureHttpRequestConfig
 ) {
-  return http.request<BaseMenuDO>(
+  return http.request<Page<BaseMenuDO>>(
     "post",
     baseApi("/base/menu/page"),
     form,

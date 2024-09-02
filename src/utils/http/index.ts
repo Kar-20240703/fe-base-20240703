@@ -170,7 +170,7 @@ class PureHttp {
             if (res.code === 100111) {
               // 这个代码需要跳转到：登录页面
               if (!hiddenErrorMsgFlag) {
-                if (getToken()?.jwt) {
+                if (getToken()?.jwt || "账户被冻结，请联系管理员" === res.msg) {
                   ToastError(res.msg); // 存在 jwt才提示错误消息
                 }
               }

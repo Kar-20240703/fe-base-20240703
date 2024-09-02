@@ -183,7 +183,8 @@ function confirmClick() {
                 value: 'id',
                 label: 'name',
                 emitPath: false,
-                multiple: true
+                multiple: true,
+                checkStrictly: true
               }"
               clearable
               filterable

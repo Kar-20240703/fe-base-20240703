@@ -4,11 +4,11 @@ import ReCol from "@/components/ReCol";
 import { R } from "@/model/vo/R";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
-import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
-import { formEditRule } from "@/views/base/role/formEditRule";
-import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
 import { BaseUserInsertOrUpdateDTO } from "@/api/http/base/BaseUserController";
 import { IUserDialogFormProps } from "@/views/base/user/types";
+import { yesOrNoOptions } from "@/model/enum/yesOrNoEnum";
+import { enableFlagOptions } from "@/views/base/user/enums";
+import { formEditRule } from "@/views/base/user/formEditRule";
 
 const form = ref<BaseUserInsertOrUpdateDTO>({});
 const formRef = ref();
@@ -34,11 +34,11 @@ function addOpen(formTemp?: BaseUserInsertOrUpdateDTO) {
   );
 }
 
-function editOpen(fun: Promise<R<any>>) {
+function editOpen(fun: Promise<R<any>>, formTemp: BaseUserInsertOrUpdateDTO) {
   dialogLoading.value = true;
   confirmLoading.value = false;
   visible.value = true;
-  form.value = {};
+  form.value = formTemp || {};
   formRef.value?.clearValidate();
   fun.then(res => {
     form.value = res.data;
@@ -98,11 +98,61 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="唯一标识" prop="uuid">
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="form.email" clearable placeholder="请输入邮箱" />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="手机号" prop="phone">
             <el-input
-              v-model="form.uuid"
+              v-model="form.phone"
               clearable
-              placeholder="请输入唯一标识"
+              placeholder="请输入手机号"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="微信appId" prop="wxAppId">
+            <el-input
+              v-model="form.wxAppId"
+              clearable
+              placeholder="请输入微信appId"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="微信openId" prop="wxOpenId">
+            <el-input
+              v-model="form.wxOpenId"
+              clearable
+              placeholder="请输入微信openId"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col v-if="!form.id" :value="12" :xs="24" :sm="24">
+          <el-form-item label="密码" prop="password">
+            <el-input
+              v-model="form.password"
+              clearable
+              placeholder="请输入密码"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="后台登录" prop="manageSignInFlag">
+            <re-segmented
+              :modelValue="form.manageSignInFlag ? 0 : 1"
+              :options="yesOrNoOptions"
+              @change="
+                ({ option: { value } }) => {
+                  form.manageSignInFlag = value;
+                }
+              "
             />
           </el-form-item>
         </re-col>
@@ -122,23 +172,21 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="默认角色" prop="defaultFlag">
-            <re-segmented
-              :modelValue="form.defaultFlag ? 0 : 1"
-              :options="yesOrNoOptions"
-              @change="
-                ({ option: { value } }) => {
-                  form.defaultFlag = value;
-                }
-              "
+          <el-form-item label="个人简介" prop="bio">
+            <el-input
+              v-model="form.bio"
+              clearable
+              placeholder="请输入个人简介"
+              :autosize="{ minRows: 2, maxRows: 4 }"
+              type="textarea"
             />
           </el-form-item>
         </re-col>
 
         <re-col>
-          <el-form-item label="关联用户" prop="userIdSet">
+          <el-form-item label="关联角色" prop="roleIdSet">
             <el-select
-              v-model="form.userIdSet"
+              v-model="form.roleIdSet"
               placeholder="请选择"
               class="w-full"
               clearable
@@ -148,7 +196,7 @@ function confirmClick() {
               collapse-tags-tooltip
             >
               <el-option
-                v-for="item in props.userDictList"
+                v-for="item in props.roleDictList"
                 :key="item.id"
                 :value="item.id"
                 :label="item.name"
@@ -156,56 +204,6 @@ function confirmClick() {
                 {{ item.name }}
               </el-option>
             </el-select>
-          </el-form-item>
-        </re-col>
-
-        <re-col>
-          <el-form-item label="关联权限" prop="authIdSet">
-            <el-select
-              v-model="form.authIdSet"
-              placeholder="请选择"
-              class="w-full"
-              clearable
-              multiple
-              filterable
-              collapse-tags
-              collapse-tags-tooltip
-            >
-              <el-option
-                v-for="item in props.authDictList"
-                :key="item.id"
-                :value="item.id"
-                :label="item.name"
-              >
-                {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </re-col>
-
-        <re-col>
-          <el-form-item label="关联菜单" prop="menuIdSet">
-            <el-cascader
-              v-model="form.menuIdSet"
-              class="w-full"
-              :options="props.menuDictList as any"
-              :props="{
-                value: 'id',
-                label: 'name',
-                emitPath: false,
-                multiple: true
-              }"
-              clearable
-              filterable
-              placeholder="请选择"
-              collapse-tags
-              collapse-tags-tooltip
-            >
-              <template #default="{ node, data }">
-                <span>{{ data.name }}</span>
-                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-              </template>
-            </el-cascader>
           </el-form-item>
         </re-col>
       </el-row>

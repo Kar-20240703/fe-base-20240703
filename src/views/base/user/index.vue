@@ -7,40 +7,36 @@ import AddFill from "@iconify-icons/ri/add-circle-line";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
 import {
-  baseRoleDeleteByIdSet,
+  baseRoleDictList,
   BaseRoleDO,
-  baseRoleInfoById,
-  baseRoleInsertOrUpdate,
-  baseRolePage,
-  BaseRolePageDTO,
   DictVO
 } from "@/api/http/base/BaseRoleController";
-import FormEdit from "@/views/base/role/formEdit.vue";
-import { baseAuthDictList } from "@/api/http/base/BaseAuthController";
+import FormEdit from "@/views/base/user/formEdit.vue";
 import {
-  baseMenuDictTreeList,
-  BaseMenuDO
-} from "@/api/http/base/BaseMenuController";
-import { baseUserDictList } from "@/api/http/base/BaseUserController";
+  baseUserDeleteByIdSet,
+  baseUserInfoById,
+  baseUserInsertOrUpdate,
+  baseUserPage,
+  BaseUserPageDTO,
+  BaseUserPageVO
+} from "@/api/http/base/BaseUserController";
 
 defineOptions({
-  name: "BaseRole"
+  name: "BaseUser"
 });
 
-const search = ref<BaseRolePageDTO>({});
+const search = ref<BaseUserPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseRoleDO[]>([]);
+const dataList = ref<BaseUserPageVO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
 
 const formRef = ref();
 const title = ref<string>("");
-const userDictList = ref<DictVO[]>([]);
-const authDictList = ref<DictVO[]>([]);
-const menuDictList = ref<BaseMenuDO[]>([]);
+const roleDictList = ref<DictVO[]>([]);
 
 const tableRef = ref();
 
@@ -48,32 +44,18 @@ const selectIdArr = ref<string[]>([]);
 
 onMounted(() => {
   onSearch();
-  initAuthDictList();
-  initMenuDictList();
-  initUserDictList();
+  initRoleDictList();
 });
 
-function initUserDictList() {
-  baseUserDictList({ addAdminFlag: false }).then(res => {
-    userDictList.value = res.data.records;
-  });
-}
-
-function initAuthDictList() {
-  baseAuthDictList().then(res => {
-    authDictList.value = res.data.records;
-  });
-}
-
-function initMenuDictList() {
-  baseMenuDictTreeList().then(res => {
-    menuDictList.value = res.data;
+function initRoleDictList() {
+  baseRoleDictList().then(res => {
+    roleDictList.value = res.data.records;
   });
 }
 
 function onSearch() {
   loading.value = true;
-  baseRolePage({
+  baseUserPage({
     ...search.value,
     current: currentPage.value as any,
     pageSize: pageSize.value as any
@@ -93,17 +75,17 @@ function resetSearch() {
 }
 
 function editClick(row: BaseRoleDO) {
-  title.value = "修改角色";
-  formRef.value.editOpen(baseRoleInfoById({ id: row.id }));
+  title.value = "修改用户";
+  formRef.value.editOpen(baseUserInfoById({ id: row.id }), { id: row.id });
 }
 
 function addClick(row: BaseRoleDO) {
-  title.value = "新增角色";
+  title.value = "新增用户";
   formRef.value.addOpen(row);
 }
 
 function confirmFun() {
-  return baseRoleInsertOrUpdate(formRef.value.getForm().value);
+  return baseUserInsertOrUpdate(formRef.value.getForm().value);
 }
 
 function confirmAfterFun(res, done) {
@@ -112,16 +94,16 @@ function confirmAfterFun(res, done) {
   onSearch();
 }
 
-function deleteClick(row: BaseRoleDO) {
+function deleteClick(row: BaseUserPageVO) {
   ExecConfirm(
     async () => {
-      await baseRoleDeleteByIdSet({ idSet: [row.id] }).then(res => {
+      await baseUserDeleteByIdSet({ idSet: [row.id] }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
     },
     undefined,
-    `确定删除【${row.name}】吗？`
+    `确定删除【${row.nickname}】吗？`
   );
 }
 
@@ -132,7 +114,7 @@ function deleteBySelectIdArr() {
   }
   ExecConfirm(
     async () => {
-      await baseRoleDeleteByIdSet({ idSet: selectIdArr.value }).then(res => {
+      await baseUserDeleteByIdSet({ idSet: selectIdArr.value }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -151,10 +133,18 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
   <div class="flex flex-col">
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="角色名称：" prop="name">
+        <el-form-item label="用户昵称：" prop="nickname">
           <el-input
-            v-model="search.name"
-            placeholder="请输入角色名称"
+            v-model="search.nickname"
+            placeholder="请输入用户昵称"
+            clearable
+            class="!w-[180px]"
+          />
+        </el-form-item>
+        <el-form-item label="用户名：" prop="username">
+          <el-input
+            v-model="search.username"
+            placeholder="请输入用户名"
             clearable
             class="!w-[180px]"
           />
@@ -185,7 +175,7 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
             :icon="useRenderIcon(AddFill)"
             @click="addClick({})"
           >
-            新增角色
+            新增用户
           </el-button>
           <el-button
             type="primary"
@@ -210,13 +200,12 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column #default="scope" prop="name" label="角色名称">
-          <span class="flex items-center">
-            {{ scope.row.name }}
-            <span v-if="scope.row.defaultFlag"> （默认） </span>
-          </span>
-        </el-table-column>
-        <el-table-column prop="uuid" label="唯一标识" />
+        <el-table-column prop="nickname" label="用户昵称" />
+        <el-table-column prop="username" label="用户名" />
+        <el-table-column prop="email" label="邮箱" />
+        <el-table-column prop="phone" label="手机号" />
+        <el-table-column prop="createTime" label="创建时间" />
+        <el-table-column prop="lastActiveTime" label="最近活跃时间" />
         <el-table-column #default="scope" label="操作">
           <el-button
             link
@@ -253,9 +242,7 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
       :title="title"
       :confirm-fun="confirmFun"
       :confirm-after-fun="confirmAfterFun"
-      :auth-dict-list="authDictList"
-      :menu-dict-list="menuDictList"
-      :user-dict-list="userDictList"
+      :role-dict-list="roleDictList"
     />
   </div>
 </template>

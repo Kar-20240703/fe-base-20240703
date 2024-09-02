@@ -16,24 +16,8 @@ const dialogLoading = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 
-function getRef() {
-  return formRef;
-}
-
 function getForm() {
   return form;
-}
-
-function getVisible() {
-  return visible;
-}
-
-function getDialogLoading() {
-  return dialogLoading;
-}
-
-function getConfirmLoading() {
-  return confirmLoading;
 }
 
 function addOpen(formTemp?: BaseRoleInsertOrUpdateDTO) {
@@ -63,11 +47,7 @@ function editOpen(fun: Promise<R<any>>) {
 }
 
 defineExpose({
-  getRef,
   getForm,
-  getVisible,
-  getDialogLoading,
-  getConfirmLoading,
   addOpen,
   editOpen
 });

@@ -16,6 +16,8 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { ToastError } from "@/utils/ToastUtil";
 import type { R } from "@/model/vo/R";
 import CommonConstant from "@/model/constant/CommonConstant";
+import { router } from "@/store/utils";
+import { signPath } from "@/router";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -170,7 +172,9 @@ class PureHttp {
             if (res.code === 100111) {
               // 这个代码需要跳转到：登录页面
               if (!hiddenErrorMsgFlag) {
-                if (getToken()?.jwt || "账户被冻结，请联系管理员" === res.msg) {
+                const fullPath = router.currentRoute.value.fullPath;
+
+                if (fullPath === signPath || getToken()?.jwt) {
                   ToastError(res.msg); // 存在 jwt才提示错误消息
                 }
               }

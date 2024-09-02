@@ -154,6 +154,8 @@ function confirmClick() {
               clearable
               multiple
               filterable
+              collapse-tags
+              collapse-tags-tooltip
             >
               <el-option
                 v-for="item in props.userDictList"
@@ -176,6 +178,8 @@ function confirmClick() {
               clearable
               multiple
               filterable
+              collapse-tags
+              collapse-tags-tooltip
             >
               <el-option
                 v-for="item in props.authDictList"
@@ -204,6 +208,8 @@ function confirmClick() {
               clearable
               filterable
               placeholder="请选择"
+              collapse-tags
+              collapse-tags-tooltip
             >
               <template #default="{ node, data }">
                 <span>{{ data.name }}</span>

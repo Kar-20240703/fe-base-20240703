@@ -155,6 +155,8 @@ function confirmClick() {
               clearable
               multiple
               filterable
+              collapse-tags
+              collapse-tags-tooltip
             >
               <el-option
                 v-for="item in props.roleDictList"

@@ -41,6 +41,7 @@ export interface BaseUserInsertOrUpdateDTO {
   password?: string; // 前端加密之后的密码
   deptIdSet?: string[]; // 部门 idSet，format：int64
   phone?: string; // 手机号码，maxLength：100，minLength：0
+  wxUnionId?: string; // 微信 unionId
   nickname?: string; // 昵称，正则表达式：^[\u4E00-\u9FA5A-Za-z0-9_-]{1,20}$，maxLength：100，minLength：0
   roleIdSet?: string[]; // 角色 idSet，format：int64
   id?: string; // 主键 id，format：int64
@@ -230,9 +231,9 @@ export interface NotNullId {
 
 export interface BaseUserInfoByIdVO {
   postIdSet?: string[]; // 岗位 idSet，format：int64
-  wxOpenId?: string; // 微信 openId，可以为空，wxAppId + wxOpenId 全租户唯一
+  wxOpenId?: string; // 微信 openId，可以为空，wxAppId + wxOpenId 唯一
   avatarFileId?: string; // 头像 fileId（文件主键 id），format：int64
-  wxAppId?: string; // 微信 appId，可以为空，wxAppId + wxOpenId 全租户唯一，备注：因为微信对不同的公众号或者小程序，会提供相同的 wxAppId，所以需要加上 wxOpenId，进行唯一性检查
+  wxAppId?: string; // 微信 appId，可以为空，wxAppId + wxOpenId 唯一，备注：因为微信对不同的公众号或者小程序，会提供相同的 wxAppId，所以需要加上 wxOpenId，进行唯一性检查
   bio?: string; // 个人简介
   updateTime?: string; // 修改时间，format：date-time
   remark?: string; // 备注
@@ -243,7 +244,7 @@ export interface BaseUserInfoByIdVO {
   createTime?: string; // 创建时间，format：date-time
   phone?: string; // 手机号，可以为空
   createId?: string; // 创建人id，format：int64
-  wxUnionId?: string; // 微信 unionId，可以为空，wxUnionId 全租户唯一
+  wxUnionId?: string; // 微信 unionId，可以为空，wxUnionId 唯一
   nickname?: string; // 昵称
   roleIdSet?: string[]; // 角色 idSet，format：int64
   id?: string; // 主键 id，format：int64

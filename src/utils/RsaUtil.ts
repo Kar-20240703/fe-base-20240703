@@ -17,7 +17,10 @@ export function PasswordRSAEncrypt(
 }
 
 // 非对称加密
-function RSAEncrypt(word: string, rsaPublicKey: string = RSA_PUBLIC_KEY) {
+export function RSAEncrypt(
+  word: string,
+  rsaPublicKey: string = RSA_PUBLIC_KEY
+) {
   const jse = new JsEncrypt();
 
   jse.setPublicKey(rsaPublicKey); // 设置公钥

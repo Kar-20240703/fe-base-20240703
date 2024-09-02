@@ -124,6 +124,16 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="微信unionId" prop="wxUnionId">
+            <el-input
+              v-model="form.wxUnionId"
+              clearable
+              placeholder="请输入微信unionId"
+            />
+          </el-form-item>
+        </re-col>
+
+        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="微信openId" prop="wxOpenId">
             <el-input
               v-model="form.wxOpenId"

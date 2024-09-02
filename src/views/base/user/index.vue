@@ -6,20 +6,18 @@ import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
-import {
-  baseRoleDictList,
-  BaseRoleDO,
-  DictVO
-} from "@/api/http/base/BaseRoleController";
+import { baseRoleDictList, DictVO } from "@/api/http/base/BaseRoleController";
 import FormEdit from "@/views/base/user/formEdit.vue";
 import {
   baseUserDeleteByIdSet,
   baseUserInfoById,
   baseUserInsertOrUpdate,
+  BaseUserInsertOrUpdateDTO,
   baseUserPage,
   BaseUserPageDTO,
   BaseUserPageVO
 } from "@/api/http/base/BaseUserController";
+import { PasswordRSAEncrypt, RSAEncrypt } from "@/utils/RsaUtil";
 
 defineOptions({
   name: "BaseUser"
@@ -74,18 +72,25 @@ function resetSearch() {
   onSearch();
 }
 
-function editClick(row: BaseRoleDO) {
+function editClick(row: BaseUserPageVO) {
   title.value = "修改用户";
   formRef.value.editOpen(baseUserInfoById({ id: row.id }), { id: row.id });
 }
 
-function addClick(row: BaseRoleDO) {
+function addClick(row: BaseUserPageVO) {
   title.value = "新增用户";
   formRef.value.addOpen(row);
 }
 
 function confirmFun() {
-  return baseUserInsertOrUpdate(formRef.value.getForm().value);
+  const formValue: BaseUserInsertOrUpdateDTO = {
+    ...formRef.value.getForm().value
+  };
+  if (!formValue.id && formValue.password) {
+    formValue.originPassword = RSAEncrypt(formValue.password);
+    formValue.password = PasswordRSAEncrypt(formValue.password);
+  }
+  return baseUserInsertOrUpdate(formValue);
 }
 
 function confirmAfterFun(res, done) {
@@ -124,7 +129,7 @@ function deleteBySelectIdArr() {
   );
 }
 
-function onSelectChange(rowArr?: BaseRoleDO[]) {
+function onSelectChange(rowArr?: BaseUserPageVO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 }
 </script>

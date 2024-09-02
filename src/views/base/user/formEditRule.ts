@@ -27,5 +27,11 @@ export const formEditRule: FormRules = {
       trigger: "blur",
       asyncValidator: Validate.phone.canNullValidator
     }
+  ],
+  password: [
+    {
+      trigger: "blur",
+      asyncValidator: Validate.password.canNullValidator
+    }
   ]
 };

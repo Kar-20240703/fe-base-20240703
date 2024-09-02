@@ -10,14 +10,20 @@ import { baseRoleDictList, DictVO } from "@/api/http/base/BaseRoleController";
 import FormEdit from "@/views/base/user/formEdit.vue";
 import {
   baseUserDeleteByIdSet,
+  baseUserFreeze,
   baseUserInfoById,
   baseUserInsertOrUpdate,
   BaseUserInsertOrUpdateDTO,
   baseUserPage,
   BaseUserPageDTO,
-  BaseUserPageVO
+  BaseUserPageVO,
+  baseUserResetAvatar,
+  baseUserThaw,
+  baseUserUpdatePassword
 } from "@/api/http/base/BaseUserController";
 import { PasswordRSAEncrypt, RSAEncrypt } from "@/utils/RsaUtil";
+import FormUpdatePassword from "@/views/base/user/formUpdatePassword.vue";
+import { IFormUpdatePassword } from "@/views/base/user/types";
 
 defineOptions({
   name: "BaseUser"
@@ -39,6 +45,8 @@ const roleDictList = ref<DictVO[]>([]);
 const tableRef = ref();
 
 const selectIdArr = ref<string[]>([]);
+
+const formUpdatePasswordRef = ref();
 
 onMounted(() => {
   onSearch();
@@ -132,6 +140,82 @@ function deleteBySelectIdArr() {
 function onSelectChange(rowArr?: BaseUserPageVO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 }
+
+function updatePasswordClick() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  formUpdatePasswordRef.value.open();
+}
+
+function updatePasswordConfirmFun() {
+  const formUpdatePasswordValue: IFormUpdatePassword = {
+    ...formUpdatePasswordRef.value.getForm().value
+  };
+  formUpdatePasswordValue.newOriginPassword = RSAEncrypt(
+    formUpdatePasswordValue.newPassword
+  );
+  formUpdatePasswordValue.newPassword = PasswordRSAEncrypt(
+    formUpdatePasswordValue.newPassword
+  );
+  return baseUserUpdatePassword({
+    idSet: selectIdArr.value,
+    newOriginPassword: formUpdatePasswordValue.newOriginPassword,
+    newPassword: formUpdatePasswordValue.newPassword
+  });
+}
+
+function resetAvatarClick() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  ExecConfirm(
+    async () => {
+      await baseUserResetAvatar({ idSet: selectIdArr.value }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定重置勾选的【${selectIdArr.value.length}】项头像吗？`
+  );
+}
+
+function freezeClick() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  ExecConfirm(
+    async () => {
+      await baseUserFreeze({ idSet: selectIdArr.value }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定冻结勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
+
+function thawClick() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  ExecConfirm(
+    async () => {
+      await baseUserThaw({ idSet: selectIdArr.value }).then(res => {
+        ToastSuccess(res.msg);
+        onSearch();
+      });
+    },
+    undefined,
+    `确定解冻勾选的【${selectIdArr.value.length}】项数据吗？`
+  );
+}
 </script>
 
 <template>
@@ -181,6 +265,34 @@ function onSelectChange(rowArr?: BaseUserPageVO[]) {
             @click="addClick({})"
           >
             新增用户
+          </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon('ri:lock-password-line')"
+            @click="updatePasswordClick"
+          >
+            批量修改密码
+          </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon('ri:image-2-line')"
+            @click="resetAvatarClick"
+          >
+            批量重置头像
+          </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon('ep:lock')"
+            @click="freezeClick"
+          >
+            批量冻结
+          </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon('ep:unlock')"
+            @click="thawClick"
+          >
+            批量解冻
           </el-button>
           <el-button
             type="primary"
@@ -248,6 +360,12 @@ function onSelectChange(rowArr?: BaseUserPageVO[]) {
       :confirm-fun="confirmFun"
       :confirm-after-fun="confirmAfterFun"
       :role-dict-list="roleDictList"
+    />
+
+    <form-update-password
+      ref="formUpdatePasswordRef"
+      :confirm-fun="updatePasswordConfirmFun"
+      :confirm-after-fun="confirmAfterFun"
     />
   </div>
 </template>

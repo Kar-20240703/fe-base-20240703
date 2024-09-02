@@ -16,6 +16,10 @@ import {
   BaseAuthPageDTO
 } from "@/api/http/base/BaseAuthController";
 import FormEdit from "@/views/base/auth/formEdit.vue";
+import FormBatch from "@/views/base/auth/formBatch.vue";
+import { IFormBatch } from "@/views/base/auth/types";
+import type { R } from "@/model/vo/R";
+import MenuAddFill from "@iconify-icons/ri/menu-add-fill";
 
 defineOptions({
   name: "BaseAuth"
@@ -37,6 +41,8 @@ const roleDictList = ref<DictVO[]>([]);
 const tableRef = ref();
 
 const selectIdArr = ref<string[]>([]);
+
+const formBatchRef = ref();
 
 onMounted(() => {
   onSearch();
@@ -88,6 +94,48 @@ function confirmAfterFun(res, done) {
   done();
   ToastSuccess(res.msg);
   onSearch();
+}
+
+function batchAddClick() {
+  formBatchRef.value.open();
+}
+
+function batchConfirmFun() {
+  const formBatch: IFormBatch = formBatchRef.value.getForm().value;
+
+  return new Promise<R<any>>(resolve => {
+    baseAuthInsertOrUpdate({
+      name: formBatch.namePre + ":新增修改",
+      auth: formBatch.authPre + ":insertOrUpdate",
+      enableFlag: true
+    }).then(() => {
+      baseAuthInsertOrUpdate({
+        name: formBatch.namePre + ":列表查询",
+        auth: formBatch.authPre + ":page",
+        enableFlag: true
+      }).then(() => {
+        baseAuthInsertOrUpdate({
+          name: formBatch.namePre + ":删除",
+          auth: formBatch.authPre + ":deleteByIdSet",
+          enableFlag: true
+        }).then(() => {
+          baseAuthInsertOrUpdate({
+            name: formBatch.namePre + ":查看详情",
+            auth: formBatch.authPre + ":infoById",
+            enableFlag: true
+          }).then(() => {
+            baseAuthInsertOrUpdate({
+              name: formBatch.namePre + ":下拉列表",
+              auth: formBatch.authPre + ":dictList",
+              enableFlag: true
+            }).then(res => {
+              resolve(res);
+            });
+          });
+        });
+      });
+    });
+  });
 }
 
 function deleteClick(row: BaseAuthDO) {
@@ -167,6 +215,13 @@ function onSelectChange(rowArr?: BaseAuthDO[]) {
           </el-button>
           <el-button
             type="primary"
+            :icon="useRenderIcon(MenuAddFill)"
+            @click="batchAddClick()"
+          >
+            批量新增
+          </el-button>
+          <el-button
+            type="primary"
             :icon="useRenderIcon(Delete)"
             @click="deleteBySelectIdArr"
           >
@@ -227,6 +282,12 @@ function onSelectChange(rowArr?: BaseAuthDO[]) {
       :confirm-fun="confirmFun"
       :confirm-after-fun="confirmAfterFun"
       :role-dict-list="roleDictList"
+    />
+
+    <form-batch
+      ref="formBatchRef"
+      :confirm-fun="batchConfirmFun"
+      :confirm-after-fun="confirmAfterFun"
     />
   </div>
 </template>

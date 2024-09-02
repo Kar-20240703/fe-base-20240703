@@ -99,7 +99,10 @@ function confirmClick() {
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item prop="name">
             <template #label>
-              <div v-tippy="{ content: '例如：基础:菜单:新增修改' }">
+              <div
+                v-tippy="{ content: '例如：基础:菜单:新增修改' }"
+                v-copy:click="'基础:菜单:新增修改'"
+              >
                 权限名称
               </div>
             </template>
@@ -114,7 +117,10 @@ function confirmClick() {
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="权限值" prop="auth">
             <template #label>
-              <div v-tippy="{ content: '例如：baseMenu:insertOrUpdate' }">
+              <div
+                v-tippy="{ content: '例如：baseMenu:insertOrUpdate' }"
+                v-copy:click="'baseMenu:insertOrUpdate'"
+              >
                 权限值
               </div>
             </template>

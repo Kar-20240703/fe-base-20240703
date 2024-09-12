@@ -208,6 +208,7 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
         }"
         show-overflow-tooltip
         stripe
+        highlight-current-row
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />

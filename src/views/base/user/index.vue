@@ -334,6 +334,7 @@ function thawClick() {
         :default-sort="defaultOrder"
         show-overflow-tooltip
         stripe
+        highlight-current-row
         @selection-change="onSelectChange"
         @sort-change="onSortChange"
       >
@@ -350,6 +351,7 @@ function thawClick() {
         >
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
+        <el-table-column prop="region" label="ip位置" />
         <el-table-column prop="createTime" sortable label="创建时间" />
         <el-table-column prop="lastActiveTime" label="最近活跃时间" sortable />
         <el-table-column #default="scope" label="操作">

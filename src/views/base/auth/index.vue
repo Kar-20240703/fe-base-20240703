@@ -241,6 +241,7 @@ function onSelectChange(rowArr?: BaseAuthDO[]) {
         }"
         show-overflow-tooltip
         stripe
+        highlight-current-row
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />

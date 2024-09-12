@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import {
-  baseAreaAddOrderNo,
-  baseAreaDeleteByIdSet,
-  BaseAreaDO,
-  baseAreaInfoById,
-  baseAreaInsertOrUpdate,
-  BaseAreaPageDTO,
-  baseAreaTree,
-  baseAreaUpdateOrderNo
-} from "@/api/http/base/BaseAreaController";
-import formEdit from "@/views/base/area/formEdit.vue";
+  basePostAddOrderNo,
+  basePostDeleteByIdSet,
+  BasePostDO,
+  basePostInfoById,
+  basePostInsertOrUpdate,
+  BasePostPageDTO,
+  basePostTree,
+  basePostUpdateOrderNo
+} from "@/api/http/base/BasePostController";
+import formEdit from "@/views/base/post/formEdit.vue";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
@@ -30,17 +30,17 @@ import { CalcOrderNo } from "@/utils/TreeUtil";
 import { baseUserDictList } from "@/api/http/base/BaseUserController";
 
 defineOptions({
-  name: "BaseArea"
+  name: "BasePost"
 });
 
-const search = ref<BaseAreaPageDTO>({});
+const search = ref<BasePostPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseAreaDO[]>([]);
+const dataList = ref<BasePostDO[]>([]);
 
 const formRef = ref();
-const parentOptions = ref<BaseAreaDO[]>([]);
+const parentOptions = ref<BasePostDO[]>([]);
 const title = ref<string>("");
 const userDictList = ref<DictVO[]>([]);
 
@@ -64,7 +64,7 @@ function initUserDictList() {
 
 function onSearch() {
   loading.value = true;
-  baseAreaTree(search.value)
+  basePostTree(search.value)
     .then(res => {
       dataList.value = res.data;
       if (Object.keys(search.value).length === 0) {
@@ -81,13 +81,13 @@ function resetSearch() {
   onSearch();
 }
 
-function editClick(row: BaseAreaDO) {
-  title.value = "修改区域";
-  formRef.value.editOpen(baseAreaInfoById({ id: row.id }));
+function editClick(row: BasePostDO) {
+  title.value = "修改岗位";
+  formRef.value.editOpen(basePostInfoById({ id: row.id }));
 }
 
-function addClick(row: BaseAreaDO, record?: BaseAreaDO) {
-  title.value = "新增区域";
+function addClick(row: BasePostDO, record?: BasePostDO) {
+  title.value = "新增岗位";
   if (record) {
     CalcOrderNo(row, record);
   }
@@ -95,7 +95,7 @@ function addClick(row: BaseAreaDO, record?: BaseAreaDO) {
 }
 
 function confirmFun() {
-  return baseAreaInsertOrUpdate(formRef.value.getForm().value);
+  return basePostInsertOrUpdate(formRef.value.getForm().value);
 }
 
 function confirmAfterFun(res, done) {
@@ -104,10 +104,10 @@ function confirmAfterFun(res, done) {
   onSearch();
 }
 
-function deleteClick(row: BaseAreaDO) {
+function deleteClick(row: BasePostDO) {
   ExecConfirm(
     async () => {
-      await baseAreaDeleteByIdSet({ idSet: [row.id] }).then(res => {
+      await basePostDeleteByIdSet({ idSet: [row.id] }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -124,7 +124,7 @@ function deleteBySelectIdArr() {
   }
   ExecConfirm(
     async () => {
-      await baseAreaDeleteByIdSet({ idSet: selectIdArr.value }).then(res => {
+      await basePostDeleteByIdSet({ idSet: selectIdArr.value }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -139,8 +139,8 @@ function onExpand() {
   ToggleRowExpansionAll(dataList.value, isExpandAll.value, tableRef.value);
 }
 
-function orderNoChange(row: BaseAreaDO) {
-  baseAreaUpdateOrderNo({ idSet: [row.id], number: String(row.orderNo) }).then(
+function orderNoChange(row: BasePostDO) {
+  basePostUpdateOrderNo({ idSet: [row.id], number: String(row.orderNo) }).then(
     res => {
       ToastSuccess(res.msg);
       onSearch();
@@ -156,12 +156,12 @@ function addOrderNoBySelectIdArr() {
   addOrderNoFormRef.value.open();
 }
 
-function onSelectChange(rowArr?: BaseAreaDO[]) {
+function onSelectChange(rowArr?: BasePostDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
 }
 
 function addOrderNoConfirmFun() {
-  return baseAreaAddOrderNo({
+  return basePostAddOrderNo({
     idSet: selectIdArr.value,
     number: addOrderNoFormRef.value.getForm().value.number
   });
@@ -178,10 +178,10 @@ function addOrderNoConfirmAfterFun(res, done) {
   <div class="flex flex-col">
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="区域名称：" prop="name">
+        <el-form-item label="岗位名称：" prop="name">
           <el-input
             v-model="search.name"
-            placeholder="请输入区域名称"
+            placeholder="请输入岗位名称"
             clearable
             class="!w-[180px]"
           />
@@ -221,7 +221,7 @@ function addOrderNoConfirmAfterFun(res, done) {
             :icon="useRenderIcon(AddFill)"
             @click="addClick({})"
           >
-            新增区域
+            新增岗位
           </el-button>
           <el-button
             type="primary"
@@ -256,7 +256,7 @@ function addOrderNoConfirmAfterFun(res, done) {
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="name" label="区域名称" />
+        <el-table-column prop="name" label="岗位名称" />
         <el-table-column #default="scope" prop="orderNo" label="排序">
           <el-input-number
             v-model="scope.row.orderNo"

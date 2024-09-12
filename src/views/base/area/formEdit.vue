@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ReCol from "@/components/ReCol";
-import { BaseMenuInsertOrUpdateDTO } from "@/api/http/base/BaseMenuController";
+import { BaseAreaInsertOrUpdateDTO } from "@/api/http/base/BaseAreaController";
 import { R } from "@/model/vo/R";
-import { formEditRule } from "@/views/base/menu/formEditRule";
+import { formEditRule } from "@/views/base/area/formEditRule";
 import CommonConstant from "@/model/constant/CommonConstant";
-import { IconSelect } from "@/components/ReIcon";
-import { showFlagOptions } from "@/views/base/menu/enums";
 import ReSegmented from "@/components/ReSegmented/src";
 import { doConfirmClick, doOpen } from "@/model/types/IDialogFormProps";
 import { enableFlagOptions } from "@/model/enum/enableFlagEnum";
-import { IMenuDialogTreeFormProps } from "@/views/base/menu/types";
+import { IAreaDialogTreeFormProps } from "@/views/base/area/types";
 
-const form = ref<BaseMenuInsertOrUpdateDTO>({});
+const form = ref<BaseAreaInsertOrUpdateDTO>({});
 const formRef = ref();
 const dialogLoading = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
@@ -22,7 +20,7 @@ function getForm() {
   return form;
 }
 
-function addOpen(formTemp?: BaseMenuInsertOrUpdateDTO) {
+function addOpen(formTemp?: BaseAreaInsertOrUpdateDTO) {
   doOpen(
     formRef,
     form,
@@ -30,7 +28,6 @@ function addOpen(formTemp?: BaseMenuInsertOrUpdateDTO) {
     confirmLoading,
     {
       orderNo: CommonConstant.DEFAULT_ORDER_NO,
-      showFlag: true,
       enableFlag: true,
       ...formTemp
     },
@@ -56,7 +53,7 @@ defineExpose({
   editOpen
 });
 
-const props = defineProps<IMenuDialogTreeFormProps>();
+const props = defineProps<IAreaDialogTreeFormProps>();
 
 function confirmClick() {
   doConfirmClick(formRef, props, visible, confirmLoading);
@@ -82,7 +79,7 @@ function confirmClick() {
     >
       <el-row :gutter="30">
         <re-col>
-          <el-form-item label="上级菜单" prop="pid">
+          <el-form-item label="上级区域" prop="pid">
             <el-cascader
               v-model="form.pid"
               class="w-full"
@@ -95,7 +92,7 @@ function confirmClick() {
               }"
               clearable
               filterable
-              placeholder="请选择上级菜单"
+              placeholder="请选择上级区域"
             >
               <template #default="{ node, data }">
                 <span>{{ data.name }}</span>
@@ -106,41 +103,11 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="菜单名称" prop="name">
+          <el-form-item label="区域名称" prop="name">
             <el-input
               v-model="form.name"
               clearable
-              placeholder="请输入菜单名称"
-            />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="菜单路径" prop="path">
-            <el-input
-              v-model="form.path"
-              clearable
-              placeholder="请输入菜单路径"
-            />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="路由路径" prop="router">
-            <el-input
-              v-model="form.router"
-              clearable
-              placeholder="请输入路由路径"
-            />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="重定向" prop="redirect">
-            <el-input
-              v-model="form.redirect"
-              clearable
-              placeholder="请输入重定向"
+              placeholder="请输入区域名称"
             />
           </el-form-item>
         </re-col>
@@ -166,26 +133,6 @@ function confirmClick() {
         </re-col>
 
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="菜单图标" prop="icon">
-            <IconSelect v-model="form.icon" class="w-full" />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="显示" prop="showFlag">
-            <re-segmented
-              :modelValue="form.showFlag ? 0 : 1"
-              :options="showFlagOptions"
-              @change="
-                ({ option: { value } }) => {
-                  form.showFlag = value;
-                }
-              "
-            />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="启用" prop="enableFlag">
             <re-segmented
               :modelValue="form.enableFlag ? 0 : 1"
@@ -200,9 +147,9 @@ function confirmClick() {
         </re-col>
 
         <re-col>
-          <el-form-item label="关联角色" prop="roleIdSet">
+          <el-form-item label="关联用户" prop="userIdSet">
             <el-select
-              v-model="form.roleIdSet"
+              v-model="form.userIdSet"
               placeholder="请选择"
               class="w-full"
               clearable
@@ -212,7 +159,7 @@ function confirmClick() {
               collapse-tags-tooltip
             >
               <el-option
-                v-for="item in props.roleDictList"
+                v-for="item in props.userDictList"
                 :key="item.id"
                 :value="item.id"
                 :label="item.name"

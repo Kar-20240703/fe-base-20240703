@@ -341,6 +341,14 @@ function thawClick() {
         <el-table-column prop="username" label="用户名" />
         <el-table-column prop="email" label="邮箱" />
         <el-table-column prop="phone" label="手机号" />
+        <el-table-column
+          #default="scope"
+          prop="enableFlag"
+          label="冻结"
+          width="100"
+        >
+          {{ scope.row.enableFlag ? "否" : "是" }}
+        </el-table-column>
         <el-table-column prop="createTime" sortable label="创建时间" />
         <el-table-column prop="lastActiveTime" label="最近活跃时间" sortable />
         <el-table-column #default="scope" label="操作">

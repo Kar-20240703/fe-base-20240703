@@ -1,55 +1,58 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import {
+  baseAreaAddOrderNo,
+  baseAreaDeleteByIdSet,
+  BaseAreaDO,
+  baseAreaInfoById,
+  baseAreaInsertOrUpdate,
+  BaseAreaPageDTO,
+  baseAreaTree,
+  baseAreaUpdateOrderNo
+} from "@/api/http/base/BaseAreaController";
+import formEdit from "@/views/base/area/formEdit.vue";
 import { ExecConfirm, ToastError, ToastSuccess } from "@/utils/ToastUtil";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
+import MenuAddFill from "@iconify-icons/ri/menu-add-fill";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
+import ExpandIcon from "@/assets/table-bar/expand.svg?component";
 import {
-  baseRoleDeleteByIdSet,
-  BaseRoleDO,
-  baseRoleInfoById,
-  baseRoleInsertOrUpdate,
-  baseRolePage,
-  BaseRolePageDTO,
-  DictVO
-} from "@/api/http/base/BaseRoleController";
-import FormEdit from "@/views/base/role/formEdit.vue";
-import { baseAuthDictList } from "@/api/http/base/BaseAuthController";
-import {
-  baseMenuDictTreeList,
-  BaseMenuDO
-} from "@/api/http/base/BaseMenuController";
+  ICON_CLASS,
+  RendTippyProps,
+  ToggleRowExpansionAll
+} from "@/components/RePureTableBar/src/bar";
+import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
+import { DictVO } from "@/api/http/base/BaseRoleController";
+import { CalcOrderNo } from "@/utils/TreeUtil";
 import { baseUserDictList } from "@/api/http/base/BaseUserController";
 
 defineOptions({
-  name: "BaseRole"
+  name: "BaseArea"
 });
 
-const search = ref<BaseRolePageDTO>({});
+const search = ref<BaseAreaPageDTO>({});
 const searchRef = ref();
 
 const loading = ref<boolean>(false);
-const dataList = ref<BaseRoleDO[]>([]);
-const total = ref<number>(0);
-const currentPage = ref<number>(1);
-const pageSize = ref<number>(15);
+const dataList = ref<BaseAreaDO[]>([]);
 
 const formRef = ref();
+const parentOptions = ref<BaseAreaDO[]>([]);
 const title = ref<string>("");
 const userDictList = ref<DictVO[]>([]);
-const authDictList = ref<DictVO[]>([]);
-const menuDictList = ref<BaseMenuDO[]>([]);
 
 const tableRef = ref();
+const isExpandAll = ref<boolean>(true);
 
 const selectIdArr = ref<string[]>([]);
 
+const addOrderNoFormRef = ref();
+
 onMounted(() => {
   onSearch();
-  initAuthDictList();
-  initMenuDictList();
   initUserDictList();
 });
 
@@ -59,28 +62,14 @@ function initUserDictList() {
   });
 }
 
-function initAuthDictList() {
-  baseAuthDictList().then(res => {
-    authDictList.value = res.data.records;
-  });
-}
-
-function initMenuDictList() {
-  baseMenuDictTreeList().then(res => {
-    menuDictList.value = res.data;
-  });
-}
-
 function onSearch() {
   loading.value = true;
-  baseRolePage({
-    ...search.value,
-    current: currentPage.value as any,
-    pageSize: pageSize.value as any
-  })
+  baseAreaTree(search.value)
     .then(res => {
-      dataList.value = res.data.records;
-      total.value = res.data.total;
+      dataList.value = res.data;
+      if (Object.keys(search.value).length === 0) {
+        parentOptions.value = res.data;
+      }
     })
     .finally(() => {
       loading.value = false;
@@ -92,18 +81,21 @@ function resetSearch() {
   onSearch();
 }
 
-function editClick(row: BaseRoleDO) {
-  title.value = "修改角色";
-  formRef.value.editOpen(baseRoleInfoById({ id: row.id }));
+function editClick(row: BaseAreaDO) {
+  title.value = "修改区域";
+  formRef.value.editOpen(baseAreaInfoById({ id: row.id }));
 }
 
-function addClick(row: BaseRoleDO) {
-  title.value = "新增角色";
+function addClick(row: BaseAreaDO, record?: BaseAreaDO) {
+  title.value = "新增区域";
+  if (record) {
+    CalcOrderNo(row, record);
+  }
   formRef.value.addOpen(row);
 }
 
 function confirmFun() {
-  return baseRoleInsertOrUpdate(formRef.value.getForm().value);
+  return baseAreaInsertOrUpdate(formRef.value.getForm().value);
 }
 
 function confirmAfterFun(res, done) {
@@ -112,10 +104,10 @@ function confirmAfterFun(res, done) {
   onSearch();
 }
 
-function deleteClick(row: BaseRoleDO) {
+function deleteClick(row: BaseAreaDO) {
   ExecConfirm(
     async () => {
-      await baseRoleDeleteByIdSet({ idSet: [row.id] }).then(res => {
+      await baseAreaDeleteByIdSet({ idSet: [row.id] }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -132,7 +124,7 @@ function deleteBySelectIdArr() {
   }
   ExecConfirm(
     async () => {
-      await baseRoleDeleteByIdSet({ idSet: selectIdArr.value }).then(res => {
+      await baseAreaDeleteByIdSet({ idSet: selectIdArr.value }).then(res => {
         ToastSuccess(res.msg);
         onSearch();
       });
@@ -142,8 +134,43 @@ function deleteBySelectIdArr() {
   );
 }
 
-function onSelectChange(rowArr?: BaseRoleDO[]) {
+function onExpand() {
+  isExpandAll.value = !isExpandAll.value;
+  ToggleRowExpansionAll(dataList.value, isExpandAll.value, tableRef.value);
+}
+
+function orderNoChange(row: BaseAreaDO) {
+  baseAreaUpdateOrderNo({ idSet: [row.id], number: String(row.orderNo) }).then(
+    res => {
+      ToastSuccess(res.msg);
+      onSearch();
+    }
+  );
+}
+
+function addOrderNoBySelectIdArr() {
+  if (!selectIdArr.value.length) {
+    ToastError("请勾选数据");
+    return;
+  }
+  addOrderNoFormRef.value.open();
+}
+
+function onSelectChange(rowArr?: BaseAreaDO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
+}
+
+function addOrderNoConfirmFun() {
+  return baseAreaAddOrderNo({
+    idSet: selectIdArr.value,
+    number: addOrderNoFormRef.value.getForm().value.number
+  });
+}
+
+function addOrderNoConfirmAfterFun(res, done) {
+  done();
+  ToastSuccess(res.msg);
+  onSearch();
 }
 </script>
 
@@ -151,10 +178,10 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
   <div class="flex flex-col">
     <div class="search-form bg-bg_color px-8 pt-[12px] mb-3">
       <el-form ref="searchRef" :inline="true" :model="search">
-        <el-form-item label="角色名称：" prop="name">
+        <el-form-item label="区域名称：" prop="name">
           <el-input
             v-model="search.name"
-            placeholder="请输入角色名称"
+            placeholder="请输入区域名称"
             clearable
             class="!w-[180px]"
           />
@@ -177,7 +204,16 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
 
     <div class="flex flex-col px-5 py-3 bg-bg_color">
       <div class="pb-3 flex justify-between">
-        <div />
+        <div>
+          <ExpandIcon
+            v-tippy="RendTippyProps(isExpandAll ? '折叠' : '展开')"
+            :class="['w-[16px]', ICON_CLASS]"
+            :style="{
+              transform: isExpandAll ? 'none' : 'rotate(-90deg)'
+            }"
+            @click="onExpand"
+          />
+        </div>
 
         <div>
           <el-button
@@ -185,7 +221,14 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
             :icon="useRenderIcon(AddFill)"
             @click="addClick({})"
           >
-            新增角色
+            新增区域
+          </el-button>
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(MenuAddFill)"
+            @click="addOrderNoBySelectIdArr"
+          >
+            累加排序号
           </el-button>
           <el-button
             type="primary"
@@ -206,15 +249,20 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
           background: 'var(--el-fill-color-light)',
           color: 'var(--el-text-color-primary)'
         }"
+        :default-expand-all="isExpandAll"
         show-overflow-tooltip
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />
-        <el-table-column #default="scope" prop="name" label="角色名称">
-          <span class="flex items-center">
-            {{ scope.row.name }}
-            <span v-if="scope.row.defaultFlag"> （默认） </span>
-          </span>
+        <el-table-column prop="name" label="区域名称" />
+        <el-table-column #default="scope" prop="orderNo" label="排序">
+          <el-input-number
+            v-model="scope.row.orderNo"
+            class="w-full"
+            :step="100"
+            controls-position="right"
+            @change="orderNoChange(scope.row)"
+          />
         </el-table-column>
         <el-table-column prop="uuid" label="唯一标识" />
         <el-table-column
@@ -237,6 +285,14 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
           <el-button
             link
             type="primary"
+            :icon="useRenderIcon(AddFill)"
+            @click="addClick({ pid: scope.row.id }, scope.row)"
+          >
+            新增
+          </el-button>
+          <el-button
+            link
+            type="primary"
             :icon="useRenderIcon(Delete)"
             @click="deleteClick(scope.row)"
           >
@@ -244,26 +300,21 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
           </el-button>
         </el-table-column>
       </el-table>
-
-      <el-pagination
-        v-model:page-size="pageSize"
-        v-model:current-page="currentPage"
-        class="mt-3"
-        layout="->, prev, pager, next, jumper, sizes, total"
-        :total="total"
-        :page-sizes="[15, 50, 100]"
-        @change="onSearch"
-      />
     </div>
 
     <form-edit
       ref="formRef"
+      :parent-options="parentOptions"
       :title="title"
       :confirm-fun="confirmFun"
       :confirm-after-fun="confirmAfterFun"
-      :auth-dict-list="authDictList"
-      :menu-dict-list="menuDictList"
       :user-dict-list="userDictList"
+    />
+
+    <kar-add-order-no
+      ref="addOrderNoFormRef"
+      :confirm-fun="addOrderNoConfirmFun"
+      :confirm-after-fun="addOrderNoConfirmAfterFun"
     />
   </div>
 </template>

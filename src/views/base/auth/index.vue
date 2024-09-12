@@ -245,6 +245,14 @@ function onSelectChange(rowArr?: BaseAuthDO[]) {
         <el-table-column type="selection" />
         <el-table-column prop="name" label="权限名称" />
         <el-table-column prop="auth" label="权限值" />
+        <el-table-column
+          #default="scope"
+          prop="enableFlag"
+          label="禁用"
+          width="100"
+        >
+          {{ scope.row.enableFlag ? "否" : "是" }}
+        </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button
             link

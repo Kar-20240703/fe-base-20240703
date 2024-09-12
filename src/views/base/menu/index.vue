@@ -26,6 +26,7 @@ import {
 } from "@/components/RePureTableBar/src/bar";
 import KarAddOrderNo from "@/components/KarAddOrderNo/index.vue";
 import { baseRoleDictList, DictVO } from "@/api/http/base/BaseRoleController";
+import { CalcOrderNo } from "@/utils/TreeUtil";
 
 defineOptions({
   name: "BaseMenu"
@@ -84,8 +85,11 @@ function editClick(row: BaseMenuDO) {
   formRef.value.editOpen(baseMenuInfoById({ id: row.id }));
 }
 
-function addClick(row: BaseMenuDO) {
+function addClick(row: BaseMenuDO, record?: BaseMenuDO) {
   title.value = "新增菜单";
+  if (record) {
+    CalcOrderNo(row, record);
+  }
   formRef.value.addOpen(row);
 }
 
@@ -291,7 +295,7 @@ function addOrderNoConfirmAfterFun(res, done) {
             link
             type="primary"
             :icon="useRenderIcon(AddFill)"
-            @click="addClick({ pid: scope.row.id })"
+            @click="addClick({ pid: scope.row.id }, scope.row)"
           >
             新增
           </el-button>

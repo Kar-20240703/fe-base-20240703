@@ -24,6 +24,9 @@ import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { baseMenuUserSelfMenuList } from "@/api/http/base/BaseMenuController";
 import { ListToTree } from "@/utils/TreeUtil";
+import { baseUserManageSignInFlag } from "@/api/http/base/BaseUserController";
+import { useUserStoreHook } from "@/store/modules/user";
+import { ToastError } from "@/utils/ToastUtil";
 
 const IFrame = () => import("@/layout/frame.vue");
 
@@ -201,20 +204,24 @@ function initRouter() {
         resolve(router);
       });
     } else {
-      return new Promise(resolve => {
-        getDynamicRoutes().then(data => {
-          handleAsyncRoutes(cloneDeep(data));
-          storageLocal().setItem(key, data);
-          resolve(router);
-        });
+      return new Promise((resolve, reject) => {
+        getDynamicRoutes(reject)
+          .then(data => {
+            handleAsyncRoutes(cloneDeep(data));
+            storageLocal().setItem(key, data);
+            resolve(router);
+          })
+          .catch(() => {});
       });
     }
   } else {
-    return new Promise(resolve => {
-      getDynamicRoutes().then(data => {
-        handleAsyncRoutes(cloneDeep(data));
-        resolve(router);
-      });
+    return new Promise((resolve, reject) => {
+      getDynamicRoutes(reject)
+        .then(data => {
+          handleAsyncRoutes(cloneDeep(data));
+          resolve(router);
+        })
+        .catch(() => {});
     });
   }
 }
@@ -226,33 +233,49 @@ interface MyRouteConfigsTable extends RouteChildrenConfigsTable {
 }
 
 /** 获取：动态路由 */
-async function getDynamicRoutes(): Promise<MyRouteConfigsTable[]> {
+function getDynamicRoutes(
+  reject: (reason?: any) => void
+): Promise<MyRouteConfigsTable[]> {
   const resArr: MyRouteConfigsTable[] = [];
 
-  const data = await baseMenuUserSelfMenuList();
+  return new Promise<MyRouteConfigsTable[]>(async (res, rej) => {
+    const manageSignInFlag = await baseUserManageSignInFlag();
 
-  if (!data) {
-    return resArr;
-  }
+    if (!manageSignInFlag.data) {
+      useUserStoreHook().logOut(); // 退出登录
+      ToastError("不允许登录后台，请联系管理员");
+      rej();
+      reject();
+      return;
+    }
 
-  data.data.forEach(item => {
-    resArr.push({
-      id: item.id,
-      pid: item.pid,
-      path: item.path,
-      name: item.uuid,
-      redirect: item.redirect,
-      component: item.router as unknown as RouteComponent,
-      meta: {
-        title: item.name,
-        showLink: item.showFlag,
-        icon: item.icon,
-        showParent: true
-      }
+    const data = await baseMenuUserSelfMenuList();
+
+    if (!data) {
+      rej();
+      reject();
+      return;
+    }
+
+    data.data.forEach(item => {
+      resArr.push({
+        id: item.id,
+        pid: item.pid,
+        path: item.path,
+        name: item.uuid,
+        redirect: item.redirect,
+        component: item.router as unknown as RouteComponent,
+        meta: {
+          title: item.name,
+          showLink: item.showFlag,
+          icon: item.icon,
+          showParent: true
+        }
+      });
     });
-  });
 
-  return ListToTree(resArr);
+    res(ListToTree(resArr));
+  });
 }
 
 /**

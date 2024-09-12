@@ -1,3 +1,5 @@
+import CommonConstant from "@/model/constant/CommonConstant";
+
 interface IFlatTree {
   children?: any[];
 }
@@ -159,8 +161,6 @@ interface ICalcOrderNoRecord {
   children?: ICalcOrderNoForm[];
 }
 
-export const DefaultOrderNo = 10000; // 默认 orderNo为 10000
-
 // 计算 orderNo
 export function CalcOrderNo<
   T extends ICalcOrderNoForm,
@@ -194,7 +194,7 @@ export function CalcOrderNo<
     });
   } else {
     if (form.orderNo === undefined || form.orderNo === null) {
-      form.orderNo = DefaultOrderNo;
+      form.orderNo = CommonConstant.DEFAULT_ORDER_NO;
     }
   }
 }

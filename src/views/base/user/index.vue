@@ -333,6 +333,7 @@ function thawClick() {
         }"
         :default-sort="defaultOrder"
         show-overflow-tooltip
+        stripe
         @selection-change="onSelectChange"
         @sort-change="onSortChange"
       >

@@ -250,6 +250,7 @@ function addOrderNoConfirmAfterFun(res, done) {
         }"
         :default-expand-all="isExpandAll"
         show-overflow-tooltip
+        stripe
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />

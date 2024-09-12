@@ -207,6 +207,7 @@ function onSelectChange(rowArr?: BaseRoleDO[]) {
           color: 'var(--el-text-color-primary)'
         }"
         show-overflow-tooltip
+        stripe
         @selection-change="onSelectChange"
       >
         <el-table-column type="selection" />

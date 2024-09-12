@@ -24,6 +24,11 @@ import {
 import { PasswordRSAEncrypt, RSAEncrypt } from "@/utils/RsaUtil";
 import FormUpdatePassword from "@/views/base/user/formUpdatePassword.vue";
 import { IFormUpdatePassword } from "@/views/base/user/types";
+import {
+  ElDefaultOrderDTO,
+  ElOrderDTO,
+  GetMyOrderDTO
+} from "@/model/dto/MyOrderDTO";
 
 defineOptions({
   name: "BaseUser"
@@ -37,6 +42,12 @@ const dataList = ref<BaseUserPageVO[]>([]);
 const total = ref<number>(0);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(15);
+
+const defaultOrder: ElDefaultOrderDTO = {
+  prop: "lastActiveTime",
+  order: "descending"
+};
+const elOrder = ref<ElOrderDTO>({ ...defaultOrder });
 
 const formRef = ref();
 const title = ref<string>("");
@@ -64,7 +75,8 @@ function onSearch() {
   baseUserPage({
     ...search.value,
     current: currentPage.value as any,
-    pageSize: pageSize.value as any
+    pageSize: pageSize.value as any,
+    order: GetMyOrderDTO(elOrder.value)
   })
     .then(res => {
       dataList.value = res.data.records;
@@ -77,6 +89,7 @@ function onSearch() {
 
 function resetSearch() {
   searchRef.value.resetFields();
+  tableRef.value.sort(defaultOrder.prop, defaultOrder.order);
   onSearch();
 }
 
@@ -139,6 +152,11 @@ function deleteBySelectIdArr() {
 
 function onSelectChange(rowArr?: BaseUserPageVO[]) {
   selectIdArr.value = rowArr.map(it => it.id);
+}
+
+function onSortChange(data: ElOrderDTO) {
+  elOrder.value = data;
+  onSearch();
 }
 
 function updatePasswordClick() {
@@ -313,16 +331,18 @@ function thawClick() {
           background: 'var(--el-fill-color-light)',
           color: 'var(--el-text-color-primary)'
         }"
+        :default-sort="defaultOrder"
         show-overflow-tooltip
         @selection-change="onSelectChange"
+        @sort-change="onSortChange"
       >
         <el-table-column type="selection" />
         <el-table-column prop="nickname" label="用户昵称" />
         <el-table-column prop="username" label="用户名" />
         <el-table-column prop="email" label="邮箱" />
         <el-table-column prop="phone" label="手机号" />
-        <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column prop="lastActiveTime" label="最近活跃时间" />
+        <el-table-column prop="createTime" sortable label="创建时间" />
+        <el-table-column prop="lastActiveTime" label="最近活跃时间" sortable />
         <el-table-column #default="scope" label="操作">
           <el-button
             link

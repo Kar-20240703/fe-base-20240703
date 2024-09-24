@@ -219,7 +219,7 @@ function addOrderNoConfirmAfterFun(res, done) {
           <el-button
             type="primary"
             :icon="useRenderIcon(AddFill)"
-            @click="addClick({})"
+            @click="addClick({}, { children: dataList })"
           >
             新增区域
           </el-button>

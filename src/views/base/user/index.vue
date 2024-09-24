@@ -29,6 +29,11 @@ import {
   ElOrderDTO,
   GetMyOrderDTO
 } from "@/model/dto/MyOrderDTO";
+import {
+  TempRequestCategoryEnum,
+  tempRequestCategoryEnumMap
+} from "@/views/base/user/enums";
+import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
 
 defineOptions({
   name: "BaseUser"
@@ -340,9 +345,6 @@ function thawClick() {
       >
         <el-table-column type="selection" />
         <el-table-column prop="nickname" label="用户昵称" />
-        <el-table-column prop="username" label="用户名" />
-        <el-table-column prop="email" label="邮箱" />
-        <el-table-column prop="phone" label="手机号" />
         <el-table-column
           #default="scope"
           prop="enableFlag"
@@ -352,8 +354,32 @@ function thawClick() {
           {{ scope.row.enableFlag ? "否" : "是" }}
         </el-table-column>
         <el-table-column prop="region" label="ip位置" />
-        <el-table-column prop="createTime" sortable label="创建时间" />
-        <el-table-column prop="lastActiveTime" label="最近活跃时间" sortable />
+        <el-table-column
+          #default="scope"
+          prop="createTime"
+          sortable
+          label="创建时间"
+        >
+          <span>{{
+            FormatDateTimeForCurrentDay(new Date(scope.row.createTime))
+          }}</span>
+        </el-table-column>
+        <el-table-column #default="scope" label="注册终端">
+          <span>{{
+            tempRequestCategoryEnumMap.get(scope.row.signUpType) ||
+            TempRequestCategoryEnum.PC_BROWSER_WINDOWS.name
+          }}</span>
+        </el-table-column>
+        <el-table-column
+          #default="scope"
+          prop="lastActiveTime"
+          label="最近活跃时间"
+          sortable
+        >
+          <span>{{
+            FormatDateTimeForCurrentDay(new Date(scope.row.lastActiveTime))
+          }}</span>
+        </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button
             link

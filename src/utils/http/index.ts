@@ -18,6 +18,7 @@ import type { R } from "@/model/vo/R";
 import CommonConstant from "@/model/constant/CommonConstant";
 import { router } from "@/store/utils";
 import { signPath } from "@/router";
+import { GetBrowserCategory } from "@/utils/BrowserCategoryUtil";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -80,6 +81,7 @@ class PureHttp {
           ? config
           : new Promise(resolve => {
               const data = getToken();
+              config.headers["category"] = GetBrowserCategory(); // 请求类别
               if (data) {
                 const now = new Date().getTime();
                 const expired = parseInt(data.jwtExpireTs) - now <= 0;

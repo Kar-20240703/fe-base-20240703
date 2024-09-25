@@ -34,6 +34,7 @@ import {
   tempRequestCategoryEnumMap
 } from "@/views/base/user/enums";
 import { FormatDateTimeForCurrentDay } from "@/utils/DateUtil";
+import CommonConstant from "@/model/constant/CommonConstant";
 
 defineOptions({
   name: "BaseUser"
@@ -343,7 +344,14 @@ function thawClick() {
         @selection-change="onSelectChange"
         @sort-change="onSortChange"
       >
-        <el-table-column type="selection" />
+        <el-table-column
+          :selectable="
+            (row: BaseUserPageVO) => {
+              return row.id !== CommonConstant.ADMIN_USER_ID_STR;
+            }
+          "
+          type="selection"
+        />
         <el-table-column prop="nickname" label="用户昵称" />
         <el-table-column
           #default="scope"
@@ -382,6 +390,7 @@ function thawClick() {
         </el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button
+            v-if="scope.row.id !== CommonConstant.ADMIN_USER_ID_STR"
             link
             type="primary"
             :icon="useRenderIcon(EditPen)"
@@ -390,6 +399,7 @@ function thawClick() {
             修改
           </el-button>
           <el-button
+            v-if="scope.row.id !== CommonConstant.ADMIN_USER_ID_STR"
             link
             type="primary"
             :icon="useRenderIcon(Delete)"

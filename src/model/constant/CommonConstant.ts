@@ -71,5 +71,7 @@ export default {
 
   DEFAULT_TENANT_NAME: "默认", // 默认租户名
 
-  TENANT_USER_ID_STR: "-2" // 租户的用户 id
+  TENANT_USER_ID_STR: "-2", // 租户的用户 id
+
+  ADMIN_USER_ID_STR: "0" // 系统管理员的用户 id
 };

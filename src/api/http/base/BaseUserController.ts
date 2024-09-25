@@ -269,24 +269,17 @@ export function baseUserInfoById(
   );
 }
 
-export interface BaseUserDictListDTO {
-  addAdminFlag?: boolean; // 是否追加 admin账号，默认：true
-}
-
 export interface DictVO {
   name?: string; // 显示用
   id?: string; // 传值用，format：int64
 }
 
 // 下拉列表
-export function baseUserDictList(
-  form: BaseUserDictListDTO,
-  config?: PureHttpRequestConfig
-) {
+export function baseUserDictList(config?: PureHttpRequestConfig) {
   return http.request<Page<DictVO>>(
     "post",
     baseApi("/base/user/dictList"),
-    form,
+    undefined,
     config
   );
 }

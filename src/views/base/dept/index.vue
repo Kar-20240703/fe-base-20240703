@@ -57,7 +57,7 @@ onMounted(() => {
 });
 
 function initUserDictList() {
-  baseUserDictList({ addAdminFlag: false }).then(res => {
+  baseUserDictList().then(res => {
     userDictList.value = res.data.records;
   });
 }
